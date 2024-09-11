@@ -39,35 +39,29 @@ export default () => {
 
   const folder = {
     temporary: join(__dirname, '../..', process.env.TEMPORARY_FOLDER).replace(/\\/g, "/"),
-    assets: join(__dirname, '../..', 'src', process.env.ASSETS_FOLDER, 'template').replace(/\\/g, "/"),
+    assets: join(__dirname, '../..', 'src', process.env.ASSETS_FOLDER).replace(/\\/g, "/"),
   }
-  
-  const externalService = {
-    vietQR: {
-      url: process.env.VIETQR_API_URL || 'https://api.vietqr.io',
-      defaultTemplate: process.env.VIETQR_DEFAULT_TEMPLATE || 'i7Malbk'
-    }
+
+  const vietQR = {
+    url: process.env.VIETQR_API_URL || 'https://api.vietqr.io',
+    defaultTemplate: process.env.VIETQR_DEFAULT_TEMPLATE || 'i7Malbk'
   }
 
   const paymentAccountHolder = {
-    paymentAccountHolder: {
-      bankId: process.env.PAYMENT_ACCOUNT_HOLDER_BANK_ID || '970436',
-      accountNumber: process.env.PAYMENT_ACCOUNT_HOLDER_ACCOUNT_NO || '0021000418845',
-      accountName: process.env.PAYMENT_ACCOUNT_HOLDER_ACCOUNT_NAME || 'AN THI BICH THUY',
-    }
+    bankId: process.env.PAYMENT_ACCOUNT_HOLDER_BANK_ID || '970436',
+    accountNumber: process.env.PAYMENT_ACCOUNT_HOLDER_ACCOUNT_NO || '0021000418845',
+    accountName: process.env.PAYMENT_ACCOUNT_HOLDER_ACCOUNT_NAME || 'AN THI BICH THUY',
   }
 
-  const brandInfo = {
-    brand: {
-      name: process.env.BRAND_INFO_NAME,
-      address: process.env.BRAND_INFO_ADDRESS,
-      phoneNumber: process.env.BRAND_INFO_PHONE_NUMBER,
-      email: process.env.BRAND_INFOEMAIL,
-      website: process.env.BRAND_INFO_WEBSITE,
-    }
+  const brand = {
+    name: process.env.BRAND_INFO_NAME,
+    address: process.env.BRAND_INFO_ADDRESS,
+    phoneNumber: process.env.BRAND_INFO_PHONE_NUMBER,
+    email: process.env.BRAND_INFOEMAIL,
+    website: process.env.BRAND_INFO_WEBSITE,
   }
 
   const config = process.env.NODE_ENV?.trim() === 'pro' ? pro : dev;
-  
-  return { ...config, folder, ...externalService, ...paymentAccountHolder, ...brandInfo };
+
+  return { ...config, folder, vietQR, paymentAccountHolder, brand };
 }

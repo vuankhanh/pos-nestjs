@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import * as cheerio from 'cheerio';
 import { VietqrService } from '../vietqr/vietqr.service';
-import { ITemplate } from '../shared/interface/template.interface';
-import { IOrder } from '../shared/interface/order.interface';
+import { ITemplate } from '../../../shared/interface/template.interface';
+import { IOrder } from '../../../shared/interface/order.interface';
 
 @Injectable()
 export class HtmlService {

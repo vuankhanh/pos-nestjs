@@ -4,10 +4,9 @@ import { ConfigService } from '@nestjs/config';
 import { PdfService } from './pdf/pdf.service';
 import { OrderDto } from './dto/order.dto';
 import { CustomerDto } from './dto/customer.dto';
-import { Order } from './shared/interface/order.interface';
-import { Customer } from './shared/interface/customer.interface';
-import { IFooterTemplate, Template } from './shared/interface/template.interface';
-import { FileUtil } from './shared/util/file.util';
+import { Order } from '../../shared/interface/order.interface';
+import { Customer } from '../../shared/interface/customer.interface';
+import { IFooterTemplate, Template } from '../../shared/interface/template.interface';
 
 @Controller('print')
 export class PrinterController {

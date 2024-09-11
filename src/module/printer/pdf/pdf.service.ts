@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import puppeteer from 'puppeteer';
 import { HtmlService } from '../html/html.service';
-import { ITemplate } from '../shared/interface/template.interface';
-import { FileUtil } from '../shared/util/file.util';
+import { ITemplate } from '../../../shared/interface/template.interface';
+import { FileUtil } from 'src/shared/util/file.util';
 
 @Injectable()
 export class PdfService {
@@ -38,8 +38,9 @@ export class PdfService {
       await page.setContent(mappedHtml);
       
       const temporaryFolder = this.configService.get<string>('folder.temporary');
+      await FileUtil.ensureDir(temporaryFolder);
       const orderCode = data.order.orderCode;
-      FileUtil.write(temporaryFolder+`/${orderCode}.html`, mappedHtml);
+
       const filePath = temporaryFolder + `/${orderCode}.pdf`;
       // Chuyển đổi HTML thành PDF buffer với kích thước tùy chỉnh
       const buffer = await page.pdf({

@@ -1,9 +1,9 @@
 import * as fs from 'fs';
 
 export class FileUtil {
-  static async read(filePath: string): Promise<string> {
+  static async read(filePath: string, encoding: BufferEncoding = 'utf8'): Promise<string> {
     return new Promise((resolve, reject) => {
-      fs.readFile(filePath, 'utf8', (err, data) => {
+      fs.readFile(filePath, { encoding }, (err, data) => {
         if (err) {
           reject(err);
         } else {
@@ -32,6 +32,18 @@ export class FileUtil {
           reject(err);
         } else {
           resolve();
+        }
+      });
+    });
+  }
+
+  static ensureDir(dirPath: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+      fs.mkdir(dirPath, { recursive: true }, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(dirPath);
         }
       });
     });

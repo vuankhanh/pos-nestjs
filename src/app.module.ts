@@ -8,6 +8,8 @@ import { PrinterModule } from './module/printer/printer.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AlbumModule } from './module/album/album.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       imports: [ConfigModule],
       useClass: MongodbProvider,
     }),
+    JwtModule.register({ global: true }),
+    AlbumModule,
     ProductModule,
     CustomerModule,
     OrderModule,

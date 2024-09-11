@@ -1,17 +1,27 @@
 
-import { IsDate, IsNotEmpty, IsNumber, IsString } from "class-validator";
-import { IOrder, IOrderItem } from "../shared/interface/order.interface";
-import { IsOrderItemsValid, IsPaymentMethodValid, IsStatusValid } from "../shared/custom-validator/custom-validator";
-import { TOrderStatus } from "../shared/interface/status.interface";
+import { IsDate, IsEnum, IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { IOrder, IOrderItem, TOrderStatus } from "../../../shared/interface/order.interface";
 import { Type } from "class-transformer";
-import { TPaymentMethod } from "../shared/interface/payment.interface";
+import { TPaymentMethod } from "../../../shared/interface/payment.interface";
+import { PaymentMethod } from "src/constant/payment.constant";
+import { OrderStatus } from "src/constant/status.constant";
+import { IsValid } from "../shared/custom-validator/custom-validator";
+
+const validateOrderItems = (orderItems: IOrderItem[]) => {
+  return Array.isArray(orderItems) && orderItems.length > 0 && orderItems.every(item => 
+    typeof item.productName === 'string' &&
+    typeof item.quantity === 'number' &&
+    typeof item.unit === 'string' &&
+    typeof item.price === 'number'
+  );
+};
 
 export class OrderDto implements IOrder {
   @IsString({ message: 'The orderCode must be a string' })
   @IsNotEmpty({ message: 'The orderCode is required' })
   orderCode: string;
 
-  @IsStatusValid({ message: 'The status is not valid' })
+  @IsEnum(OrderStatus, { message: 'The status is not valid' })
   status: TOrderStatus;
 
   @IsNotEmpty({ message: 'The orderDate is required' })
@@ -24,15 +34,13 @@ export class OrderDto implements IOrder {
   @Type(() => Date)
   deliveryDate: Date;
 
-  @IsNotEmpty({ message: 'The orderItems is required' })
-  
-  @IsOrderItemsValid({ message: 'The orderItems are not valid' })
+  @IsValid(validateOrderItems, { message: 'Order items are not valid' })
   orderItems: IOrderItem[];
 
   @IsNotEmpty({ message: 'The total is required' })
   @IsNumber({}, { message: 'The total must be a number' })
   total: number;
 
-  @IsPaymentMethodValid({ message: 'The paymentMethod is not valid' })
+  @IsEnum(PaymentMethod, { message: 'The paymentMethod is not valid' })
   paymentMethod: TPaymentMethod;
 }

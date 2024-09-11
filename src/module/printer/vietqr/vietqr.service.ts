@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import axios from 'axios';
+import { FileUtil } from 'src/shared/util/file.util';
 
 @Injectable()
 export class VietqrService {
@@ -24,7 +25,6 @@ export class VietqrService {
   }
 
   async createVietQRCode(amount: number, description: string): Promise<string | ArrayBuffer> {
-    
     const url = `${this.urlVietQR}/image/${this.bankId}-${this.accountNo}-${this.template}.jpg`;
     const params = {
       amount: amount,
@@ -42,7 +42,12 @@ export class VietqrService {
       // Trả về base64 string dưới dạng Data URL
       return `data:image/jpeg;base64,${base64Image}`;
     } catch (error) {
-      throw new Error(`Failed to create VietQR code: ${error.message}`);
+      console.error(`error`);
+      
+      const assetsFolder = this.configService.get<string>('folder.assets');
+      const defaultQrCode = assetsFolder + '/img/default_qr_code.png';
+      const dataFile = await FileUtil.read(defaultQrCode, 'base64');
+      return `data:image/jpeg;base64,${dataFile}`;
     }
   }
 }

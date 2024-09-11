@@ -1,5 +1,7 @@
+import { OrderStatus } from "src/constant/status.constant";
 import { TPaymentMethod } from "./payment.interface";
-import { TOrderStatus } from "./status.interface";
+
+export type TOrderStatus = `${OrderStatus}`;
 
 export interface IOrder {
   orderCode: string;
