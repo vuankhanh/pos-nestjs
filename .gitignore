@@ -45,6 +45,7 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+/ALBUM
 /TEMPORARY
 
 # Runtime data

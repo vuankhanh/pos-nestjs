@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ValidateCreateAlbumGuard } from './guards/validate_create_album.guard';
@@ -15,7 +15,7 @@ import { Types } from 'mongoose';
 import { ParseObjectIdArrayPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 import { AlbumModifyItemIndexChangeDto, AlbumModifyRemoveFilesDto } from './dto/album_modify.dto';
 import { FilesProcessPipe } from 'src/shared/pipes/file_process.pipe';
-import { IMedia } from 'src/shared/interface/media.interface';
+import { IAlbum, IMedia } from 'src/shared/interface/media.interface';
 import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
 import { MongoIdDto } from 'src/shared/dto/mongodb.dto';
 
@@ -32,7 +32,7 @@ export class AlbumController {
   }
 
   @Post()
-  @UseGuards(AuthGuard, ValidateCreateAlbumGuard)
+  @UseGuards(ValidateCreateAlbumGuard)
   @UsePipes(ValidationPipe)
   @UseInterceptors(
     FilesInterceptor('files', null, memoryStorageMulterOptions),
@@ -41,19 +41,24 @@ export class AlbumController {
   )
   async create(
     @Req() req: Request,
+    @Query('name') name: string,
+    @Query('route') route: string,
     @Body() body: AlbumDto,
     @UploadedFiles(ChangeUploadfilesNamePipe, FilesProcessPipe, DiskStoragePipe) medias: Array<IMedia>
   ) {
-    const relativePath = req['customParams'].relativePath;
+    const relativePath = req['customParams'].relativePath + '/' + route;
 
     const mainMedia = medias[body.isMain] || medias[0];
     const thumbnail = mainMedia.thumbnailUrl;
 
-    const albumDoc: Album = new Album(
+    const album: IAlbum = {
+      name,
+      route,
       thumbnail,
-      medias,
+      media: medias,
       relativePath
-    )
+    }
+    const albumDoc: Album = new Album(album);
     const createdAlbum = await this.albumService.create(albumDoc);
     return createdAlbum;
   }
@@ -67,24 +72,26 @@ export class AlbumController {
     FormatResponseInterceptor
   )
   async addNewFiles(
-    @Param(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
+    @Query(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
     @UploadedFiles(ChangeUploadfilesNamePipe, FilesProcessPipe, DiskStoragePipe) medias: Array<IMedia>
   ) {
-    const updatedAlbums = await this.albumService.addNewFiles(id, medias);
+    const _id = new Types.ObjectId(id);
+    const updatedAlbums = await this.albumService.addNewFiles({ _id }, medias);
     return updatedAlbums;
   }
 
   @Patch('remove-files')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   @UsePipes(ValidationPipe)
   @UseInterceptors(
     FormatResponseInterceptor
   )
   async removeFiles(
-    @Param(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
+    @Query(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
     @Body(new ValidationPipe({ transform: true }), new ParseObjectIdArrayPipe('filesWillRemove')) body: AlbumModifyRemoveFilesDto,
   ) {
-    const updatedAlbums = await this.albumService.removeFiles(id, body.filesWillRemove);
+    const _id = new Types.ObjectId(id);
+    const updatedAlbums = await this.albumService.removeFiles({ _id }, body.filesWillRemove);
     return updatedAlbums;
   }
 
@@ -95,10 +102,11 @@ export class AlbumController {
     FormatResponseInterceptor
   )
   async itemIndexChange(
-    @Param(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
+    @Query(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
     @Body(new ValidationPipe({ transform: true }), new ParseObjectIdArrayPipe('newItemIndexChange')) body: AlbumModifyItemIndexChangeDto,
   ) {
-    const updatedAlbums = await this.albumService.itemIndexChange(id, body.newItemIndexChange);
+    const _id = new Types.ObjectId(id);
+    const updatedAlbums = await this.albumService.itemIndexChange({ _id }, body.newItemIndexChange);
     return updatedAlbums;
   }
 
@@ -106,9 +114,10 @@ export class AlbumController {
   @UseGuards(AuthGuard, ValidateModifyAlbumGuard)
   @UseInterceptors(FormatResponseInterceptor)
   async remove(
-    @Param(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
+    @Query(new ValidationPipe({ whitelist: true })) { id }: MongoIdDto,
   ) {
-    return await this.albumService.remove(id);
+    const _id = new Types.ObjectId(id);
+    return await this.albumService.remove({ _id });
   }
 
 }

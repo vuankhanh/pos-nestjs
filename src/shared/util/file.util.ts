@@ -13,7 +13,7 @@ export class FileUtil {
     });
   }
 
-  static write(filePath: string, data: string): Promise<string> {
+  static write(filePath: string, data: string | NodeJS.ArrayBufferView): Promise<string> {
     return new Promise((resolve, reject) => {
       fs.writeFile(filePath, data, (err) => {
         if (err) {

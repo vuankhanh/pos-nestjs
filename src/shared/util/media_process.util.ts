@@ -7,7 +7,7 @@ import { TProcessedMedia } from "../interface/files.interface";
 
 @Injectable()
 export class MediaProcessUtil {
-  static async processImage(file: Express.Multer.File, mediaType: 'logo' | 'imgMarketing' | 'hightlightMarketing' = 'imgMarketing'): Promise<TProcessedMedia> {
+  static async processImage(file: Express.Multer.File, mediaType: 'logo' | 'product' = 'product'): Promise<TProcessedMedia> {
     const size = imageSize[mediaType];
     const bufferFile = await ImageConverterUtil.resize(file, size);
     const newFile: Express.Multer.File = {

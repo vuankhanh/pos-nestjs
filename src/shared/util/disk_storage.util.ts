@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import * as fs from 'fs';
 import * as path from 'path';
+import { FileUtil } from "./file.util";
 
 @Injectable()
 export class DiskStorageUtil {
-  static saveToDisk(rootPath: string, file: Express.Multer.File): string {
-    if (!fs.existsSync(rootPath)) {
-      fs.mkdirSync(rootPath);
-    }
+  static async saveToDisk(rootPath: string, file: Express.Multer.File): Promise<string> {
+    await FileUtil.ensureDir(rootPath);
+    
     const filePath = path.join(rootPath, file.originalname);
-    fs.writeFileSync(filePath, file.buffer);
+    await FileUtil.write(filePath, file.buffer);
 
     return filePath;
   }

@@ -56,12 +56,8 @@ export const imageSize = {
     width: 500,
     height: 500
   },
-  imgMarketing: {
+  product: {
     width: 1920,
     height: 1080
-  },
-  hightlightMarketing: {
-    width: 1920,
-    height: 389
   }
 }

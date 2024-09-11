@@ -3,6 +3,7 @@ import { REQUEST } from '@nestjs/core';
 import { TProcessedMedia } from '../interface/files.interface';
 import { IMedia } from '../interface/media.interface';
 import { DiskStorageUtil } from '../util/disk_storage.util';
+import { Request } from 'express';
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -20,10 +21,16 @@ export class DiskStoragePipe implements PipeTransform {
   private saveToDisk(processedMedia: TProcessedMedia): IMedia {
     const customParams = this.request['customParams'];
     const destination = customParams.albumFolder;
-    const relativePath = customParams.relativePath;
+
+    const query = this.request.query;
+    const route = query.route as string;
+    
+    const relativePath = customParams.relativePath + '/' + route;
+
     const absolutePath = destination + '/' + relativePath;
 
     const file = processedMedia.file;
+    
     DiskStorageUtil.saveToDisk(absolutePath, file);
 
     const thumbnail = processedMedia.thumbnail;

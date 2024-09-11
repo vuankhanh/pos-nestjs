@@ -1,6 +1,7 @@
 import { CanActivate, ConflictException, ExecutionContext, Injectable } from '@nestjs/common';
 import { AlbumService } from '../album.service';
 import { ConfigService } from '@nestjs/config';
+import { VietnameseAccentUtil } from 'src/shared/util/vietnamese-accent.util';
 
 @Injectable()
 export class ValidateCreateAlbumGuard implements CanActivate {
@@ -20,19 +21,28 @@ export class ValidateCreateAlbumGuard implements CanActivate {
       return false;
     }
 
-    const params = request.params;
-    const id = params.id;
+    const query = request.query;
+    const name = query.name;
+    if(!name) {
+      return false;
+    }
 
-    const isExists = await this.albumService.checkExistAlbum(id);
+    const nameNonAccentVietnamese = VietnameseAccentUtil.toNonAccentVietnamese(name);
+    const route = VietnameseAccentUtil.replaceSpaceToDash(nameNonAccentVietnamese);
+
+    const isExists = await this.albumService.checkExistAlbum({ route });
     if (isExists) {
       throw new ConflictException('Album already exists');
     };
+
+    query['route'] = route;
 
     const albumFolder = this.configService.get('folder.album');
     request['customParams'] = {};
     
     request.customParams.albumFolder = albumFolder;
-    request.customParams.relativePath = 'imgMarketing';
+    request.customParams.relativePath = 'product';
+    
     return true;
   }
 }

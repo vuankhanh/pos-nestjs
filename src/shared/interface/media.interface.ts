@@ -1,3 +1,11 @@
+export interface IAlbum {
+  name: string;
+  route: string;
+  thumbnail: string;
+  media: IMedia[];
+  relativePath: string;
+}
+
 export interface IMedia {
   url: string;
   thumbnailUrl: string;

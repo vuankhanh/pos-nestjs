@@ -38,6 +38,7 @@ export default () => {
   };
 
   const folder = {
+    album: join(__dirname, '../..', process.env.ALBUM_FOLDER).replace(/\\/g, "/"),
     temporary: join(__dirname, '../..', process.env.TEMPORARY_FOLDER).replace(/\\/g, "/"),
     assets: join(__dirname, '../..', 'src', process.env.ASSETS_FOLDER).replace(/\\/g, "/"),
   }
