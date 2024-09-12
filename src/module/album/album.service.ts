@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Album } from './schema/album.schema';
+import { Album, AlbumDocument } from './schema/album.schema';
 import mongoose, { FilterQuery, HydratedDocument, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { IBasicService } from 'src/shared/interface/basic_service.interface';
@@ -32,7 +32,7 @@ export class AlbumService implements IBasicService<Album> {
   }
 
   async getAll(filterQuery: FilterQuery<Album>,page: number, size: number) {
-    const countTotal = await this.albumModel.countDocuments({});
+    const countTotal = await this.albumModel.countDocuments(filterQuery);
     const albumsAggregate = await this.albumModel.aggregate(
       [
         { $match: filterQuery },
@@ -122,16 +122,19 @@ export class AlbumService implements IBasicService<Album> {
   }
 
   async modify(filterQuery: FilterQuery<Album>, data: Partial<Album>) {
-    const milestone = await this.albumModel.findOneAndUpdate(filterQuery, data, { new: true });
-    return milestone;
+    await this.albumModel.findOneAndUpdate(filterQuery, data, { new: true });
+
+    const album = await this.tranformToDetaiData(filterQuery);
+    return album;
   }
 
   async remove(filterQuery: FilterQuery<Album>) {
-    const milestone = await this.albumModel.findOneAndDelete(filterQuery);
-    return milestone;
+    await this.albumModel.findOneAndDelete(filterQuery);
+    const album = await this.tranformToDetaiData(filterQuery);
+    return album;
   }
 
-  private async tranformToDetaiData($match: FilterQuery<Album>): Promise<HydratedDocument<Album>> {
+  private async tranformToDetaiData($match: FilterQuery<Album>): Promise<AlbumDocument> {
     return await this.albumModel.aggregate(
       [
         { $match }, {

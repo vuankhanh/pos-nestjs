@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { CustomerService } from './customer.service';
 import { CustomerDto } from './dto/customer.dto';
@@ -7,15 +7,21 @@ import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
 import { CsvUtil } from 'src/shared/util/csv.util';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 
+//1. Guards: Được sử dụng để bảo vệ các route.
+//2.Interceptors: Được sử dụng để thay đổi hoặc mở rộng hành vi của các method.
+//3. Pipes: Được sử dụng để biến đổi hoặc xác thực dữ liệu.
 @Controller('customer')
+// @UseGuards(AuthGuard)
+@UseInterceptors(FormatResponseInterceptor)
+@UsePipes(ValidationPipe)
 export class CustomerController {
   constructor(
     private readonly customerService: CustomerService
   ) { }
 
   @Get()
-  @UseInterceptors(FormatResponseInterceptor)
   async getAll(
     @Query('name') name: string,
     @Query('page') page: number = 1,
@@ -30,7 +36,6 @@ export class CustomerController {
   }
 
   @Get(':id')
-  @UseInterceptors(FormatResponseInterceptor)
   async getDetail(
     @Param('id', new ParseObjectIdPipe()) id: string,
   ) {
@@ -39,7 +44,6 @@ export class CustomerController {
   }
 
   @Post()
-  @UseInterceptors(FormatResponseInterceptor)
   async create(
     @Body() customerDto: CustomerDto
   ) {
@@ -51,7 +55,6 @@ export class CustomerController {
   @HttpCode(200)
   @UseInterceptors(
     FileInterceptor('csv', memoryStorageMulterOptions),
-    FormatResponseInterceptor
   )
   async uploadVcf(
     @UploadedFile() file: Express.Multer.File
@@ -63,7 +66,6 @@ export class CustomerController {
   }
 
   @Put(':id')
-  @UseInterceptors(FormatResponseInterceptor)
   async replace(
     @Param('id', new ParseObjectIdPipe()) id: string,
     @Body() customerDto: CustomerDto
@@ -74,7 +76,6 @@ export class CustomerController {
   }
 
   @Patch(':id')
-  @UseInterceptors(FormatResponseInterceptor)
   async modify(
     @Param('id', new ParseObjectIdPipe()) id: string,
     @Body() customerDto: Partial<CustomerDto>
@@ -85,7 +86,6 @@ export class CustomerController {
   }
 
   @Delete(':id')
-  @UseInterceptors(FormatResponseInterceptor)
   async remove(
     @Param('id', new ParseObjectIdPipe()) id: string
   ) {

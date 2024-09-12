@@ -18,6 +18,8 @@ import { IAlbum, IMedia } from 'src/shared/interface/media.interface';
 import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
 
 @Controller('album')
+// @UseGuards(AuthGuard)
+@UsePipes(ValidationPipe)
 export class AlbumController {
   constructor(
     private readonly albumService: AlbumService
@@ -48,7 +50,6 @@ export class AlbumController {
 
   @Post()
   @UseGuards(ValidateCreateAlbumGuard)
-  @UsePipes(ValidationPipe)
   @UseInterceptors(
     FilesInterceptor('files', null, memoryStorageMulterOptions),
     FilesProccedInterceptor,
@@ -80,7 +81,6 @@ export class AlbumController {
 
   @Patch('add-new-files')
   @UseGuards(ValidateModifyAlbumGuard)
-  @UsePipes(ValidationPipe)
   @UseInterceptors(
     FilesInterceptor('files', null, memoryStorageMulterOptions),
     FilesProccedInterceptor,
@@ -96,8 +96,6 @@ export class AlbumController {
   }
 
   @Patch('remove-files')
-  // @UseGuards(AuthGuard)
-  @UsePipes(ValidationPipe)
   @UseInterceptors(
     FormatResponseInterceptor
   )
@@ -111,7 +109,6 @@ export class AlbumController {
   }
 
   @Delete(':id')
-  // @UseGuards(AuthGuard)
   @UseInterceptors(FormatResponseInterceptor)
   async remove(
     @Param('id', new ParseObjectIdPipe()) id: string,

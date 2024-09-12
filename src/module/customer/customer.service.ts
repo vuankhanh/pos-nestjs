@@ -22,7 +22,7 @@ export class CustomerService implements IBasicService<Customer> {
   }
 
   async getAll(filterQuery: FilterQuery<Customer>, page: number, size: number): Promise<{ data: FlattenMaps<Customer>[]; paging: IPaging; }> {
-    const countTotal = await this.customerModel.countDocuments({});
+    const countTotal = await this.customerModel.countDocuments(filterQuery);
     const albumsAggregate = await this.customerModel.aggregate(
       [
         { $match: filterQuery },

@@ -1,4 +1,4 @@
-import mongoose, { FilterQuery, FlattenMaps, HydratedDocument } from "mongoose";
+import { FilterQuery, FlattenMaps, HydratedDocument } from "mongoose";
 import { IPaging } from "./paging.interface";
 
 //T is the DTO, M is the Model
