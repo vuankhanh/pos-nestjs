@@ -23,6 +23,7 @@ export class ValidateCreateAlbumGuard implements CanActivate {
 
     const query = request.query;
     const name = query.name;
+    
     if(!name) {
       return false;
     }

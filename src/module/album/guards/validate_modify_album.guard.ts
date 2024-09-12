@@ -1,7 +1,7 @@
-import { BadRequestException, CanActivate, ConflictException, ExecutionContext, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { BadRequestException, CanActivate, ExecutionContext, Injectable, InternalServerErrorException } from '@nestjs/common';
 import { AlbumService } from '../album.service';
 import { ConfigService } from '@nestjs/config';
-
+import { ObjectId } from 'mongodb';
 @Injectable()
 export class ValidateModifyAlbumGuard implements CanActivate {
   constructor(
@@ -13,8 +13,15 @@ export class ValidateModifyAlbumGuard implements CanActivate {
   ): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
 
-    const album = await this.albumService.getDetail({});
+    const query = request.query;
+    const id = query.id;
+    if(!id) {
+      return false;
+    }
 
+    const filterQuery = { _id: ObjectId.createFromHexString(id) };
+    const album = await this.albumService.getDetail(filterQuery);
+    
     if (!album) {
       throw new BadRequestException('Album not found');
     };
@@ -27,23 +34,8 @@ export class ValidateModifyAlbumGuard implements CanActivate {
     request['customParams'] = {};
     
     request.customParams.albumFolder = albumFolder;
-    request.customParams.relativePath = album.relativePath;
+    request.customParams.relativePath = 'product';
     
-    return true;
-  }
-}
-
-@Injectable()
-export class ValidateModifyItemIndexchangeAlbumGuard implements CanActivate {
-  canActivate(
-    context: ExecutionContext,
-  ): boolean {
-    const request = context.switchToHttp().getRequest();
-    const { newItemIndexChange } = request.body;
-    if( !newItemIndexChange || newItemIndexChange.length === 0) {
-      throw new BadRequestException('New item index change not found');
-    }
-
     return true;
   }
 }

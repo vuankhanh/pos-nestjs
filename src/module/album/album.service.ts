@@ -1,8 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Album } from './schema/album.schema';
-import mongoose, { FilterQuery, HydratedDocument, Model, RootFilterQuery, Types } from 'mongoose';
+import mongoose, { FilterQuery, HydratedDocument, Model, Types } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { Media, MediaDocument } from './schema/media.schema';
 import { IBasicService } from 'src/shared/interface/basic_service.interface';
 import { IMedia } from 'src/shared/interface/media.interface';
 import { SortUtil } from 'src/shared/util/sort_util';
@@ -97,7 +96,7 @@ export class AlbumService implements IBasicService<Album> {
 
   async removeFiles(
     filterQuery: FilterQuery<Album>,
-    filesWillRemove: Array<string | mongoose.Types.ObjectId> = [],
+    filesWillRemove: Array<mongoose.Types.ObjectId> = [],
   ) {
     if (!filesWillRemove.length) {
       throw new Error('No files to remove');
@@ -119,21 +118,6 @@ export class AlbumService implements IBasicService<Album> {
 
     const album = await this.tranformToDetaiData(filterQuery);
     return album;
-  }
-
-  async itemIndexChange(filterQuery: FilterQuery<Album>, itemIndexChanges: Array<string | mongoose.Types.ObjectId>) {
-
-    const album = await this.albumModel.findOne(filterQuery);
-    if (!album) {
-      throw new Error('Album not found');
-    }
-
-    album.media = SortUtil.sortDocumentArrayByIndex<Media>(album.media as Array<MediaDocument>, itemIndexChanges);
-
-    await album.save();
-
-    const updatedAlbum = await this.tranformToDetaiData(filterQuery);
-    return updatedAlbum;
   }
 
   async modify(filterQuery: FilterQuery<Album>, data: Partial<Album>) {

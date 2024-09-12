@@ -21,12 +21,5 @@ export class AlbumModifyRemoveFilesDto {
   @IsArray({ message: 'filesWillRemove must be an array' })
   @IsMongoId({ each: true, message: 'filesWillRemove must be an array of string or ObjectId' })
   @Type(() => String)
-  filesWillRemove: Array<string | mongoose.Types.ObjectId>;
-}
-
-export class AlbumModifyItemIndexChangeDto {
-  @IsArray({ message: 'newItemIndexChange must be an array' })
-  @IsMongoId({ each: true, message: 'newItemIndexChange must be an array of string or ObjectId' })
-  @Type(() => String)
-  newItemIndexChange: Array<string | mongoose.Types.ObjectId>;
+  filesWillRemove: Array<mongoose.Types.ObjectId>;
 }

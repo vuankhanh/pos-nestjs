@@ -5,8 +5,8 @@ import { PdfService } from './pdf/pdf.service';
 import { OrderDto } from './dto/order.dto';
 import { CustomerDto } from './dto/customer.dto';
 import { Order } from '../../shared/interface/order.interface';
-import { Customer } from '../../shared/interface/customer.interface';
 import { IFooterTemplate, Template } from '../../shared/interface/template.interface';
+import { Customer } from '../customer/schema/customer.schema';
 
 @Controller('print')
 export class PrinterController {
