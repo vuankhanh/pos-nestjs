@@ -17,10 +17,15 @@ export class CustomerService implements IBasicService<Customer> {
     return customer;
   }
 
-  async getAll(page: number, size: number): Promise<{ data: FlattenMaps<Customer>[]; paging: IPaging; }> {
+  async insertMany(data: Customer[]): Promise<CustomerDocument[]> {
+    return await this.customerModel.insertMany(data);
+  }
+
+  async getAll(filterQuery: FilterQuery<Customer>, page: number, size: number): Promise<{ data: FlattenMaps<Customer>[]; paging: IPaging; }> {
     const countTotal = await this.customerModel.countDocuments({});
     const albumsAggregate = await this.customerModel.aggregate(
       [
+        { $match: filterQuery },
         {
           $project: {
             name: 1,

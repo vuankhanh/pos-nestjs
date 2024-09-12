@@ -1,9 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Put, UseInterceptors, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, Put, Query, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { CustomerService } from './customer.service';
 import { CustomerDto } from './dto/customer.dto';
 import { Customer } from './schema/customer.schema';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
+import { CsvUtil } from 'src/shared/util/csv.util';
 
 @Controller('customer')
 export class CustomerController {
@@ -13,10 +16,15 @@ export class CustomerController {
 
   @Get()
   @UseInterceptors(FormatResponseInterceptor)
-  async getAll() {
-    const page = 1;
-    const size = 10;
-    const metaData = await this.customerService.getAll(page, size);
+  async getAll(
+    @Query('name') name: string,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = 10
+  ) {
+    const filterQuery = {};
+    if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
+    
+    const metaData = await this.customerService.getAll(filterQuery, page, size);
 
     return metaData;
   }
@@ -37,6 +45,21 @@ export class CustomerController {
   ) {
     const customer: Customer = new Customer(customerDto);
     return await this.customerService.create(customer);
+  }
+
+  @Post('/upload-csv')
+  @HttpCode(200)
+  @UseInterceptors(
+    FileInterceptor('csv', memoryStorageMulterOptions),
+    FormatResponseInterceptor
+  )
+  async uploadVcf(
+    @UploadedFile() file: Express.Multer.File
+  ) {
+    const json = await CsvUtil.convertCsvToJson(file.buffer);
+    const customers: Array<Customer> = CsvUtil.transformArrJsonContactToArrCustomer(json);
+    const customerCol = await this.customerService.insertMany(customers);
+    return customerCol;
   }
 
   @Put(':id')

@@ -22,8 +22,7 @@ export class Customer implements ICustomer {
   phoneNumber: string;
 
   @Prop({
-    type: String,
-    required: true
+    type: String
   })
   address: string;
 

@@ -31,10 +31,11 @@ export class AlbumService implements IBasicService<Album> {
     return album;
   }
 
-  async getAll(page: number, size: number) {
+  async getAll(filterQuery: FilterQuery<Album>,page: number, size: number) {
     const countTotal = await this.albumModel.countDocuments({});
     const albumsAggregate = await this.albumModel.aggregate(
       [
+        { $match: filterQuery },
         {
           $addFields: {
             mediaItems: { $sum: { $size: "$media" } }

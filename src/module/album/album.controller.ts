@@ -25,10 +25,14 @@ export class AlbumController {
 
   @Get()
   @UseInterceptors(FormatResponseInterceptor)
-  async getAll() {
-    const page = 1;
-    const size = 10;
-    const metaData = await this.albumService.getAll(page, size);
+  async getAll(
+    @Query('name') name: string,
+    @Query('page') page: number = 1,
+    @Query('size') size: number = 10
+  ) {
+    const filterQuery = {};
+    if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
+    const metaData = await this.albumService.getAll(filterQuery, page, size);
 
     return metaData;
   }

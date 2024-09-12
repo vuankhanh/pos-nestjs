@@ -1,12 +1,16 @@
 import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 import * as multer from 'multer';
-import * as fse from 'fs-extra';
 
 import { BadRequestException } from "@nestjs/common";
 import { IFileType } from "src/shared/interface/files.interface";
+import { Request } from "express";
 
-const fileFilter = (req, file, cb) => {
-  const match = ['image/png', 'image/jpeg', 'video/mp4', 'video/quicktime', 'video/webm'];
+const fileFilter = (req: Request, file: Express.Multer.File, cb) => {
+  const urlCustomerUpload = '/customer/upload-csv';
+  const matchMediaFile = ['image/png', 'image/jpeg', 'video/mp4', 'video/quicktime', 'video/webm'];
+  const matchContactFile = ['text/csv'];
+
+  const match = req.url.includes(urlCustomerUpload) ? matchContactFile : matchMediaFile
   if (match.indexOf(file.mimetype) === -1) {
     return cb(new BadRequestException('Invalid file type'), false);
   }
