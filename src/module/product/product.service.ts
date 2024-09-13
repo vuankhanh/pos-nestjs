@@ -98,7 +98,10 @@ export class ProductService implements IBasicService<Product> {
           }
         },
         {
-          $unwind: '$albumDetail'
+          $unwind: {
+            path: '$albumDetail',
+            preserveNullAndEmptyArrays: true // Giữ lại tài liệu gốc nếu không có tài liệu nào khớp
+          }
         }
       ]
     ).then((data) => data[0]);

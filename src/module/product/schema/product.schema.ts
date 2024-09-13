@@ -3,6 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { IProduct } from '../../../shared/interface/product.interface';
 import { Album } from 'src/module/album/schema/album.schema';
 import { ObjectId } from 'mongodb';
+
 export type ProductDocument = HydratedDocument<Product>;
 
 @Schema({ timestamps: true })
@@ -14,7 +15,7 @@ export class Product implements IProduct {
   category: string;
 
   @Prop({ type: String, required: true, unique: true, immutable: true })
-  sku: string;
+  code: string;
 
   @Prop({ type: Number, required: true })
   price: number;
@@ -46,7 +47,7 @@ export class Product implements IProduct {
   constructor(product: IProduct) {
     this.name = product.name;
     this.category = product.category;
-    this.sku = product.sku;
+    this.code = product.code;
     this.price = product.price;
     this.availability = product.availability;
     this.unit = product.unit;

@@ -5,12 +5,11 @@ export type TOrderStatus = `${OrderStatus}`;
 
 export interface IOrder {
   orderCode: string;
-  orderDate: Date;
-  deliveryDate: Date;
   orderItems: IOrderItem[];
   status: TOrderStatus;
   total: number;
-  paymentMethod: TPaymentMethod;
+  paymentMethod?: TPaymentMethod;
+  note?: string;
 }
 
 export interface IOrderItem {
@@ -18,29 +17,4 @@ export interface IOrderItem {
   quantity: number;
   unit: string;
   price: number;
-}
-
-export class Order implements IOrder {
-  orderCode: string;
-  orderDate: Date;
-  deliveryDate: Date;
-  orderItems: IOrderItem[];
-  status: TOrderStatus;
-  total: number;
-  paymentMethod: TPaymentMethod;
-  
-  constructor(order: IOrder) {
-    this.orderCode = order.orderCode;
-    this.orderDate = order.orderDate;
-    this.deliveryDate = order.deliveryDate;
-    this.orderItems = order.orderItems;
-    this.status = order.status;
-    this.total = this.calculateTotal(order.orderItems);
-    this.paymentMethod = order.paymentMethod;
-  }
-
-  private calculateTotal(orderItems: IOrderItem[]): number {
-    return orderItems.reduce((total: number, item: IOrderItem) => total + item.price * item.quantity, 0);
-  }
-
 }

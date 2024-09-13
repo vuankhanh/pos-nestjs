@@ -11,9 +11,9 @@ export class HtmlService {
   ) { }
   async mapToHtml(data: ITemplate, html: string) {
     const $ = cheerio.load(html);
-    $('#cus_name').text(data.customer.name);
-    $('#cus_phone_number').text(data.customer.phoneNumber);
-    $('#cus_address').text(data.customer.address);
+    $('#cus_name').text(data.order.customerName);
+    $('#cus_phone_number').text(data.order.customerPhoneNumber);
+    $('#cus_address').text(data.order.customerAddress);
     $('#order').html(this.createOrderList(data.order));
     $('#order_total_bill').html(await this.createTotalBill(data.order));
 

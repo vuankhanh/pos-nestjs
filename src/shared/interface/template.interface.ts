@@ -1,9 +1,9 @@
+import { Order } from "src/module/order/schema/order.schema";
 import { ICustomer } from "./customer.interface";
 import { IOrder } from "./order.interface";
 
 export interface ITemplate {
-  customer: ICustomer;
-  order: IOrder;
+  order: Order;
   footer: IFooterTemplate;
 }
 
@@ -17,12 +17,10 @@ export interface IFooterTemplate {
 }
 
 export class Template implements ITemplate {
-  customer: ICustomer;
-  order: IOrder;
+  order: Order;
   footer: IFooterTemplate;
 
-  constructor(customer: ICustomer, order: IOrder, footer: IFooterTemplate) {
-    this.customer = customer;
+  constructor(order: Order, footer: IFooterTemplate) {
     this.order = order;
     this.footer = footer;
   }

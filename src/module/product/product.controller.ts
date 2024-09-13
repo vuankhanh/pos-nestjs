@@ -1,6 +1,6 @@
-import { Body, Controller, Get, Param, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ProductService } from './product.service';
-import { ProductDto } from './dto/product.dto';
+import { ProductDto, UpdateProductDto } from './dto/product.dto';
 import { Product } from './schema/product.schema';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
@@ -12,7 +12,7 @@ import { ObjectId } from 'mongodb';
 @Controller('product')
 // @UseGuards(AuthGuard)
 @UseInterceptors(FormatResponseInterceptor)
-@UsePipes(ValidationPipe)
+@UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class ProductController {
   constructor(
     private readonly productService: ProductService
@@ -21,10 +21,14 @@ export class ProductController {
   @Get()
   
   async getAll(
+    @Query('name') name: string,
     @Query('page') page: number = 1,
     @Query('size') size: number = 10
   ) {
-    return await this.productService.getAll({}, page, size);
+    const filterQuery = {};
+    if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
+
+    return await this.productService.getAll(filterQuery, page, size);
   }
 
   @Get(':id')
@@ -32,6 +36,7 @@ export class ProductController {
     @Param('id', new ParseObjectIdPipe()) id: string,
   ) {
     const filterQuery = { _id: id };
+    
     return await this.productService.getDetail(filterQuery);
   }
 
@@ -60,13 +65,20 @@ export class ProductController {
   @Patch(':id')
   async modify(
     @Param('id', new ParseObjectIdPipe()) id: string,
-    @Body() productDto: Partial<ProductDto>
+    @Body() productDto: UpdateProductDto
   ) {
     const filterQuery = { _id: id };
     const data: Partial<Product> = productDto;
-
     if (productDto.albumId) data.albumId = ObjectId.createFromHexString(productDto.albumId);
     
     return await this.productService.modify(filterQuery, data);
+  }
+
+  @Delete(':id')
+  async delete(
+    @Param('id', new ParseObjectIdPipe()) id: string
+  ) {
+    const filterQuery = { _id: id };
+    return await this.productService.remove(filterQuery);
   }
 }

@@ -2,11 +2,9 @@ import { Body, Controller, Post, UsePipes, ValidationPipe } from '@nestjs/common
 import { PrinterService } from './printer.service';
 import { ConfigService } from '@nestjs/config';
 import { PdfService } from './pdf/pdf.service';
-import { OrderDto } from './dto/order.dto';
-import { CustomerDto } from './dto/customer.dto';
-import { Order } from '../../shared/interface/order.interface';
+import { OrderDto } from '../order/dto/order.dto';
 import { IFooterTemplate, Template } from '../../shared/interface/template.interface';
-import { Customer } from '../customer/schema/customer.schema';
+import { Order } from '../order/schema/order.schema';
 
 @Controller('print')
 export class PrinterController {
@@ -18,11 +16,10 @@ export class PrinterController {
   
   @Post('') 
   @UsePipes(ValidationPipe)
-  async print(@Body('order') orderDto: OrderDto, @Body('customer') customerDto: CustomerDto) {
+  async print(@Body('order') orderDto: OrderDto) {
     const order: Order = new Order(orderDto);
-    const customer: Customer = new Customer(customerDto);
     const footer: IFooterTemplate = this.configService.get<IFooterTemplate>('brand');
-    const template: Template = new Template(customer, order, footer);
+    const template: Template = new Template(order, footer);
 
     try {
       const pdf = await this.printerService.print(template);
