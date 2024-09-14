@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { IBasicService } from 'src/shared/interface/basic_service.interface';
 import { Order, OrderDocument } from './schema/order.schema';
 import { InjectModel } from '@nestjs/mongoose';
-import { Document, FilterQuery, FlattenMaps, Model, Types } from 'mongoose';
+import { FilterQuery, Model, Types } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { Customer } from '../customer/schema/customer.schema';
 
@@ -13,13 +13,70 @@ export class OrderService implements IBasicService<Order> {
   ) { }
 
   async create(data: Order): Promise<OrderDocument> {
+    data.orderItems = data.orderItems.map(item => {
+      return { ...item, _id: new Types.ObjectId() }
+    });
     const order = new this.orderModel(data);
     await order.save();
     return order;
   }
 
-  getAll(filterQuery: FilterQuery<Order>, page: number, size: number): Promise<{ data: FlattenMaps<Order>[]; paging: IPaging; }> {
-    throw new Error('Method not implemented.');
+  async getAll(filterQuery: FilterQuery<Order>, page: number, size: number): Promise<{ data: OrderDocument[]; paging: IPaging; }> {
+    const countTotal = await this.orderModel.countDocuments(filterQuery);
+    const orderAggregate = await this.orderModel.aggregate(
+      [
+        { $match: filterQuery },
+        {
+          $lookup: {
+            from: Customer.name.toLowerCase(), // Tên của collection Customer
+            localField: 'customerId',
+            foreignField: '_id',
+            as: 'customerDetail'
+          }
+        },
+        {
+          $unwind: {
+            path: '$customerDetail',
+            preserveNullAndEmptyArrays: true // Giữ lại tài liệu gốc nếu không có tài liệu nào khớp
+          }
+        },
+        { $skip: size * (page - 1) },
+        { $limit: size },
+        {
+          $project: {
+            orderItems: {
+              productCode: 0,
+              _id: 0
+            },
+            customerId: 0,
+            note: 0,
+            __v: 0,
+            customerDetail: {
+              _id: 0,
+              __v: 0,
+              address: 0,
+              email: 0,
+              dob: 0,
+              company: 0,
+              note: 0,
+              createdAt: 0,
+              updatedAt: 0,
+            }
+          }
+        }
+      ]
+    );
+
+    const metaData = {
+      data: orderAggregate,
+      paging: {
+        totalItems: countTotal,
+        size: size,
+        page: page,
+        totalPages: Math.ceil(countTotal / size),
+      }
+    };
+    return metaData;
   }
 
   async getDetail(filterQuery: FilterQuery<Order>): Promise<OrderDocument> {
@@ -33,7 +90,7 @@ export class OrderService implements IBasicService<Order> {
   }
 
   async modify(filterQuery: FilterQuery<Order>, data: Partial<Order>): Promise<OrderDocument> {
-    await this.orderModel.findOneAndUpdate(filterQuery, data, { new: true, upsert: true });
+    await this.orderModel.findOneAndUpdate(filterQuery, data, { new: true });
     const product = await this.tranformToDetaiData(filterQuery);
     return product;
   }
@@ -48,7 +105,7 @@ export class OrderService implements IBasicService<Order> {
         { $match: filterQuery },
         {
           $lookup: {
-            from: Customer.name.toLowerCase(), // Tên của bộ sưu tập Customer
+            from: Customer.name.toLowerCase(), // Tên của collection Customer
             localField: 'customerId',
             foreignField: '_id',
             as: 'customerDetail'

@@ -3,6 +3,7 @@ import { HydratedDocument, Types } from 'mongoose';
 import { IProduct } from '../../../shared/interface/product.interface';
 import { Album } from 'src/module/album/schema/album.schema';
 import { ObjectId } from 'mongodb';
+import { v4 as uuidv4 } from 'uuid';
 
 export type ProductDocument = HydratedDocument<Product>;
 
@@ -10,9 +11,6 @@ export type ProductDocument = HydratedDocument<Product>;
 export class Product implements IProduct {
   @Prop({ required: true, unique: true })
   name: string;
-
-  @Prop({ type: String, required: true })
-  category: string;
 
   @Prop({ type: String, required: true, unique: true, immutable: true })
   code: string;
@@ -46,8 +44,7 @@ export class Product implements IProduct {
 
   constructor(product: IProduct) {
     this.name = product.name;
-    this.category = product.category;
-    this.code = product.code;
+    this.code = this.generateProductCode();
     this.price = product.price;
     this.availability = product.availability;
     this.unit = product.unit;
@@ -56,6 +53,14 @@ export class Product implements IProduct {
     this.brand = product.brand;
     this.rating = product.rating;
     this.reviews = product.reviews;
+  }
+
+  private generateProductCode(): string {
+    const prefix = 'PRD';
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, ''); // Lấy ngày hiện tại và chuyển định dạng thành 'yyyymmdd'
+    const randomNumber = uuidv4().split('-')[0];; // Phần đầu của UUID
+    const productCode = `${prefix}${date}${randomNumber}`; // 'PRD20231015123e4567'
+    return productCode;
   }
 
   set updateAlbumId(albumId: string) {

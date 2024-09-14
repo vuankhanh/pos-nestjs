@@ -69,7 +69,7 @@ export class ProductController {
   ) {
     const filterQuery = { _id: id };
     const data: Partial<Product> = productDto;
-    if (productDto.albumId) data.albumId = ObjectId.createFromHexString(productDto.albumId);
+    if (productDto.albumId) data.updateAlbumId =productDto.albumId;
     
     return await this.productService.modify(filterQuery, data);
   }

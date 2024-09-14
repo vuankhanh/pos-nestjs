@@ -7,14 +7,6 @@ export class ProductDto implements IProduct {
   @IsString({ message: 'Tên sản phẩm phải là chuỗi' })
   name: string;
 
-  @IsNotEmpty({ message: 'Danh mục không được để trống' })
-  @IsString({ message: 'Danh mục phải là chuỗi' })
-  category: string;
-
-  @IsNotEmpty({ message: 'Mã sản phẩm không được để trống' })
-  @IsString({ message: 'Mã sản phẩm phải là chuỗi' })
-  code: string;
-
   @IsNotEmpty({ message: 'Giá không được để trống' })
   @IsNumber({}, { message: 'Giá phải là số' })
   price: number;

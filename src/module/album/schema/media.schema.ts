@@ -45,5 +45,3 @@ export class Media implements IMedia {
   })
   type: 'image' | 'video';
 }
-
-export const mediaSchema = SchemaFactory.createForClass(Media);

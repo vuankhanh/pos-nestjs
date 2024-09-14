@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import { VietqrService } from '../vietqr/vietqr.service';
 import { ITemplate } from '../../../shared/interface/template.interface';
 import { IOrder } from '../../../shared/interface/order.interface';
+import { Order } from 'src/module/order/schema/order.schema';
 
 @Injectable()
 export class HtmlService {
@@ -25,7 +26,7 @@ export class HtmlService {
     return $.html();
   }
 
-  private createOrderList(order: IOrder): string {
+  private createOrderList(order: Order): string {
     let orderList = `<tr>
     <th>Sản phẩm</th>
     <th>SL</th>
@@ -48,7 +49,7 @@ export class HtmlService {
     return orderTableElement;
   }
 
-  private async createTotalBill(order: IOrder): Promise<string> {
+  private async createTotalBill(order: Order): Promise<string> {
     const total = order.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
     const qrcode = await this.vietqrService.createVietQRCode(total, order.orderCode);

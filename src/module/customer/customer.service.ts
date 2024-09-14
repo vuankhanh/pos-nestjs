@@ -23,7 +23,7 @@ export class CustomerService implements IBasicService<Customer> {
 
   async getAll(filterQuery: FilterQuery<Customer>, page: number, size: number): Promise<{ data: FlattenMaps<Customer>[]; paging: IPaging; }> {
     const countTotal = await this.customerModel.countDocuments(filterQuery);
-    const albumsAggregate = await this.customerModel.aggregate(
+    const customerAggregate = await this.customerModel.aggregate(
       [
         { $match: filterQuery },
         {
@@ -38,7 +38,7 @@ export class CustomerService implements IBasicService<Customer> {
     );
 
     const metaData = {
-      data: albumsAggregate,
+      data: customerAggregate,
       paging: {
         totalItems: countTotal,
         size: size,
@@ -46,6 +46,7 @@ export class CustomerService implements IBasicService<Customer> {
         totalPages: Math.ceil(countTotal / size),
       }
     };
+    
     return metaData;
   }
 
@@ -58,7 +59,7 @@ export class CustomerService implements IBasicService<Customer> {
   }
 
   async modify(filterQuery: FilterQuery<Customer>, data: Partial<Customer>): Promise<CustomerDocument> {
-    return await this.customerModel.findOneAndUpdate(filterQuery, data, { new: true, upsert: true });
+    return await this.customerModel.findOneAndUpdate(filterQuery, data, { new: true });
   }
 
   async remove(filterQuery: FilterQuery<Customer>): Promise<CustomerDocument> {

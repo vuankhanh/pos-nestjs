@@ -1,23 +1,26 @@
-import { Prop, SchemaFactory } from "@nestjs/mongoose";
+import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument, Types } from "mongoose";
 import { OrderStatus } from "src/constant/status.constant";
 import { Customer } from "src/module/customer/schema/customer.schema";
 import { IOrder, IOrderItem, TOrderStatus } from "src/shared/interface/order.interface";
 import { TPaymentMethod } from "src/shared/interface/payment.interface";
 import { ObjectId } from "mongodb";
+import { v4 as uuidv4 } from 'uuid';
+import { OrderItem } from "./order_product_item.schema";
 
 export type OrderDocument = HydratedDocument<Order>;
 
+@Schema({ timestamps: true })
 export class Order implements IOrder {
   @Prop({ type: String, required: true, unique: true, immutable: true })
   orderCode: string;
 
-  @Prop({ type: Array, required: true })
-  orderItems: IOrderItem[];
+  @Prop({ type: Array<OrderItem>, required: true })
+  orderItems: Array<OrderItem>;
 
   @Prop({ type: String, required: true, default: OrderStatus.PENDING })
   status: TOrderStatus;
-  
+
   @Prop({ type: Number, required: true })
   total: number;
 
@@ -34,25 +37,32 @@ export class Order implements IOrder {
   customerAddress?: string;
 
   @Prop({ type: Types.ObjectId, ref: Customer.name })
-  customerId?: Types.ObjectId | string;
+  customerId?: Types.ObjectId;
 
   @Prop({ type: String })
   note?: string;
 
   constructor(order: IOrder) {
-    this.orderCode = order.orderCode;
+    this.orderCode = this.generateOrderCode();
     this.orderItems = order.orderItems;
     this.status = order.status;
     this.total = this.calculateTotal(order.orderItems);
     this.paymentMethod = order.paymentMethod;
     this.note = order.note;
   }
-  
+
+  private generateOrderCode(): string {
+    const prefix = 'ORD';
+    const date = new Date().toISOString().slice(0, 10).replace(/-/g, ''); // Lấy ngày hiện tại và chuyển định dạng thành 'yyyymmdd'
+    const randomNumber = uuidv4().split('-')[0]; // Lấy một phần của UUID để làm số ngẫu nhiên
+    return `${prefix}${date}${randomNumber}`;
+  }
+
   private calculateTotal(orderItems: IOrderItem[]): number {
     return orderItems.reduce((total: number, item: IOrderItem) => total + item.price * item.quantity, 0);
   }
 
-  set updateAlbumId(customerId: string) {
+  set updateCustomerId(customerId: string) {
     this.customerId = ObjectId.createFromHexString(customerId);
   }
 

@@ -4,6 +4,7 @@ import { Product, ProductDocument } from './schema/product.schema';
 import { Document, Types, FilterQuery, FlattenMaps, Model, HydratedDocument } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { InjectModel } from '@nestjs/mongoose';
+import { Album } from '../album/schema/album.schema';
 
 @Injectable()
 export class ProductService implements IBasicService<Product> {
@@ -19,7 +20,7 @@ export class ProductService implements IBasicService<Product> {
 
   async getAll(filterQuery: FilterQuery<Product>, page: number, size: number): Promise<{ data: FlattenMaps<Product>[]; paging: IPaging; }> {
     const countTotal = await this.productModel.countDocuments(filterQuery);
-    const albumsAggregate = await this.productModel.aggregate(
+    const productAggregate = await this.productModel.aggregate(
       [
         { $match: filterQuery },
         {
@@ -54,7 +55,7 @@ export class ProductService implements IBasicService<Product> {
     );
 
     const metaData = {
-      data: albumsAggregate,
+      data: productAggregate,
       paging: {
         totalItems: countTotal,
         size: size,
@@ -62,6 +63,7 @@ export class ProductService implements IBasicService<Product> {
         totalPages: Math.ceil(countTotal / size),
       }
     };
+    
     return metaData;
   }
 
@@ -76,7 +78,7 @@ export class ProductService implements IBasicService<Product> {
   }
 
   async modify(filterQuery: FilterQuery<Product>, data: Partial<Product>): Promise<ProductDocument> {
-    await this.productModel.findOneAndUpdate(filterQuery, data, { new: true, upsert: true });
+    await this.productModel.findOneAndUpdate(filterQuery, data, { new: true });
     const product = await this.tranformToDetaiData(filterQuery);
     return product;
   }
@@ -91,7 +93,7 @@ export class ProductService implements IBasicService<Product> {
         { $match: filterQuery },
         {
           $lookup: {
-            from: 'album', // Tên của bộ sưu tập Album
+            from: Album.name.toLocaleLowerCase(), // Tên của bộ sưu tập Album
             localField: 'albumId',
             foreignField: '_id',
             as: 'albumDetail'
