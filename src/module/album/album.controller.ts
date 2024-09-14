@@ -18,6 +18,7 @@ import { IAlbum, IMedia } from 'src/shared/interface/media.interface';
 import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
 
 @Controller('album')
+@UseInterceptors(FormatResponseInterceptor)
 // @UseGuards(AuthGuard)
 @UsePipes(ValidationPipe)
 export class AlbumController {
@@ -26,7 +27,6 @@ export class AlbumController {
   ) { }
 
   @Get()
-  @UseInterceptors(FormatResponseInterceptor)
   async getAll(
     @Query('name') name: string,
     @Query('page') page: number = 1,
@@ -39,12 +39,14 @@ export class AlbumController {
     return metaData;
   }
 
-  @Get(':id')
-  @UseInterceptors(FormatResponseInterceptor)
+  @Get('detail')
   async getDetail(
-    @Param('id', new ParseObjectIdPipe()) id: string
+    @Query('id') id: string,
+    @Query('route') route: string
   ) {
-    const filterQuery = { _id: id };
+    const filterQuery = {};
+    if (id) filterQuery['_id'] = id;
+    else if (route) filterQuery['route'] = route;
     return await this.albumService.getDetail(filterQuery);
   }
 
@@ -52,8 +54,7 @@ export class AlbumController {
   @UseGuards(ValidateCreateAlbumGuard)
   @UseInterceptors(
     FilesInterceptor('files', null, memoryStorageMulterOptions),
-    FilesProccedInterceptor,
-    FormatResponseInterceptor
+    FilesProccedInterceptor
   )
   async create(
     @Req() req: Request,
@@ -83,8 +84,7 @@ export class AlbumController {
   @UseGuards(ValidateModifyAlbumGuard)
   @UseInterceptors(
     FilesInterceptor('files', null, memoryStorageMulterOptions),
-    FilesProccedInterceptor,
-    FormatResponseInterceptor
+    FilesProccedInterceptor
   )
   async addNewFiles(
     @Query('id', new ParseObjectIdPipe()) id: string,
@@ -96,9 +96,6 @@ export class AlbumController {
   }
 
   @Patch('remove-files')
-  @UseInterceptors(
-    FormatResponseInterceptor
-  )
   async removeFiles(
     @Query('id', new ParseObjectIdPipe()) id: string,
     @Body(new ValidationPipe({ transform: true }), new ParseObjectIdArrayPipe('filesWillRemove')) body: AlbumModifyRemoveFilesDto,
@@ -109,7 +106,6 @@ export class AlbumController {
   }
 
   @Delete(':id')
-  @UseInterceptors(FormatResponseInterceptor)
   async remove(
     @Param('id', new ParseObjectIdPipe()) id: string,
   ) {
