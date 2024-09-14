@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Query, Req, UploadedFiles, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { AlbumService } from './album.service';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { ValidateCreateAlbumGuard } from './guards/validate_create_album.guard';
@@ -12,7 +12,7 @@ import { Request } from 'express';
 import { ChangeUploadfilesNamePipe } from 'src/shared/pipes/change-uploadfile-name.pipe';
 import { DiskStoragePipe } from 'src/shared/pipes/disk-storage.pipe';
 import { ParseObjectIdArrayPipe, ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
-import { AlbumModifyRemoveFilesDto } from './dto/album_modify.dto';
+import { AlbumModifyItemIndexChangeDto, AlbumModifyRemoveFilesDto } from './dto/album_modify.dto';
 import { FilesProcessPipe } from 'src/shared/pipes/file_process.pipe';
 import { IAlbum, IMedia } from 'src/shared/interface/media.interface';
 import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
@@ -29,8 +29,8 @@ export class AlbumController {
   @Get()
   async getAll(
     @Query('name') name: string,
-    @Query('page') page: number = 1,
-    @Query('size') size: number = 10
+    @Query('page', ParseIntPipe) page: number = 1,
+    @Query('size', ParseIntPipe) size: number = 10
   ) {
     const filterQuery = {};
     if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
@@ -65,13 +65,9 @@ export class AlbumController {
   ) {
     const relativePath = req['customParams'].relativePath + '/' + route;
 
-    const mainMedia = medias[body.isMain] || medias[0];
-    const thumbnail = mainMedia.thumbnailUrl;
-
     const album: IAlbum = {
       name,
       route,
-      thumbnail,
       media: medias,
       relativePath
     }
@@ -102,6 +98,14 @@ export class AlbumController {
   ) {
     const queryFilter = { _id: id };
     const updatedAlbums = await this.albumService.removeFiles(queryFilter, body.filesWillRemove);
+    return updatedAlbums;
+  }
+
+  @Patch('item-index-change')
+  async itemIndexChange(
+    @Body(new ValidationPipe({ transform: true }), new ParseObjectIdArrayPipe('newItemIndexChange')) body: AlbumModifyItemIndexChangeDto,
+  ) {
+    const updatedAlbums = await this.albumService.itemIndexChange({}, body.newItemIndexChange);
     return updatedAlbums;
   }
 

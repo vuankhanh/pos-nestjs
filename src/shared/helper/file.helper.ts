@@ -15,4 +15,8 @@ export class FileHelper {
       return Promise.reject(error);
     }
   }
+
+  static async removeFolder(folderPath: string, mediaFolder: string) {
+    await FileUtil.removeFolder(folderPath + '/' + mediaFolder);
+  }
 }

@@ -7,6 +7,7 @@ import { IMedia } from 'src/shared/interface/media.interface';
 import { SortUtil } from 'src/shared/util/sort_util';
 import { FileHelper } from 'src/shared/helper/file.helper';
 import { ConfigService } from '@nestjs/config';
+import { Media, MediaDocument } from './schema/media.schema';
 
 @Injectable()
 export class AlbumService implements IBasicService<Album> {
@@ -26,19 +27,22 @@ export class AlbumService implements IBasicService<Album> {
     data.media = data.media.map(file => {
       return { ...file, _id: new Types.ObjectId() }
     });
-    const album = new this.albumModel(data);
-    await album.save();
+    const newAlbum = new this.albumModel(data);
+    await newAlbum.save();
+    const filterQuery = { _id: newAlbum._id };
+    const album = await this.tranformToDetaiData(filterQuery);
     return album;
   }
 
-  async getAll(filterQuery: FilterQuery<Album>,page: number, size: number) {
+  async getAll(filterQuery: FilterQuery<Album>, page: number, size: number) {
     const countTotal = await this.albumModel.countDocuments(filterQuery);
     const albumsAggregate = await this.albumModel.aggregate(
       [
         { $match: filterQuery },
         {
           $addFields: {
-            mediaItems: { $sum: { $size: "$media" } }
+            mediaItems: { $sum: { $size: "$media" } },
+            thumbnail: { $arrayElemAt: ["$media.thumbnailUrl", 0] }
           }
         }, {
           $project: {
@@ -109,7 +113,7 @@ export class AlbumService implements IBasicService<Album> {
       }
     }
 
-    //Lọc ra danh sách file cần xóa
+    //Lọc ra danh sách file cục bộ cần xóa
     await this.filterMediaItems(filterQuery._id, filesWillRemove).then(async mediaUrls => {
       //Xóa file
       await FileHelper.removeMediaFiles(this.albumFoler, mediaUrls);
@@ -121,6 +125,20 @@ export class AlbumService implements IBasicService<Album> {
     return album;
   }
 
+  async itemIndexChange(filterQuery: FilterQuery<Album>, itemIndexChanges: Array<string | mongoose.Types.ObjectId>) {
+    const album = await this.albumModel.findOne(filterQuery);
+    if (!album) {
+      throw new Error('Album not found');
+    }
+
+    album.media = SortUtil.sortDocumentArrayByIndex<Media>(album.media as Array<MediaDocument>, itemIndexChanges);
+
+    await album.save();
+
+    const updatedAlbum = await this.tranformToDetaiData(filterQuery);
+    return updatedAlbum;
+  }
+
   async modify(filterQuery: FilterQuery<Album>, data: Partial<Album>) {
     await this.albumModel.findOneAndUpdate(filterQuery, data, { new: true });
 
@@ -129,8 +147,11 @@ export class AlbumService implements IBasicService<Album> {
   }
 
   async remove(filterQuery: FilterQuery<Album>) {
-    await this.albumModel.findOneAndDelete(filterQuery);
-    const album = await this.tranformToDetaiData(filterQuery);
+    const album = await this.albumModel.findOneAndDelete(filterQuery);
+    if (album?.relativePath) {
+      await FileHelper.removeFolder(this.albumFoler, album.relativePath);
+    }
+    
     return album;
   }
 
@@ -139,7 +160,8 @@ export class AlbumService implements IBasicService<Album> {
       [
         { $match }, {
           $addFields: {
-            mediaItems: { $sum: { $size: "$media" } }
+            mediaItems: { $sum: { $size: "$media" } },
+            thumbnail: { $arrayElemAt: ["$media.thumbnailUrl", 0] }
           }
         }, {
           $replaceWith: {

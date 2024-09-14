@@ -37,6 +37,18 @@ export class FileUtil {
     });
   }
 
+  static async removeFolder(folderPath: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      fs.rm(folderPath, { recursive: true }, (err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve();
+        }
+      });
+    });
+  }
+
   static ensureDir(dirPath: string): Promise<string> {
     return new Promise((resolve, reject) => {
       fs.mkdir(dirPath, { recursive: true }, (err) => {

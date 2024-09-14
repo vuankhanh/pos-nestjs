@@ -22,12 +22,6 @@ export class Album implements IAlbum {
   route: string;
 
   @Prop({
-    type: String,
-    required: true
-  })
-  thumbnail: string;
-
-  @Prop({
     type: Array<Media>
   })
   media: Array<Media>;
@@ -41,7 +35,6 @@ export class Album implements IAlbum {
   constructor(album: IAlbum) {
     this.name = album.name;
     this.route = album.route;
-    this.thumbnail = album.thumbnail;
     this.media = album.media;
     this.relativePath = album.relativePath;
   }
