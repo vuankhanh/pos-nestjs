@@ -23,12 +23,15 @@ export class CustomerController {
 
   @Get()
   async getAll(
-    @Query('name') name: string,
+    @Query('name') nameOrPhoneNumber: string,
     @Query('page', ParseIntPipe) page: number = 1,
     @Query('size', ParseIntPipe) size: number = 10
   ) {
     const filterQuery = {};
-    if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
+    if (nameOrPhoneNumber) filterQuery['$or'] = [
+      { name: { $regex: nameOrPhoneNumber, $options: 'i' } },
+      { phoneNumber: { $regex: nameOrPhoneNumber, $options: 'i' } }
+    ];
     
     const metaData = await this.customerService.getAll(filterQuery, page, size);
 
