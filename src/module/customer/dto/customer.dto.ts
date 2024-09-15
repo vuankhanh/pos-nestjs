@@ -1,6 +1,7 @@
 import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString } from "class-validator";
 import { ICustomer, ICustomerLevel } from "../../../shared/interface/customer.interface";
 import { CustomerLevel } from "src/constant/customer.constant";
+import { PartialType } from "@nestjs/mapped-types";
 
 export class CustomerDto implements ICustomer {
   @IsNotEmpty({ message: 'The customer name is required' })
@@ -35,3 +36,5 @@ export class CustomerDto implements ICustomer {
   @IsEnum(CustomerLevel, { message: 'The level is not valid' })
   level: ICustomerLevel;
 }
+
+export class UpdateCustomerDto extends PartialType(CustomerDto) { }

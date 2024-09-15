@@ -64,6 +64,8 @@ export class Product implements IProduct {
   }
 
   set updateAlbumId(albumId: string) {
+    console.log('run this...');
+    
     this.albumId = ObjectId.createFromHexString(albumId);
   }
 }

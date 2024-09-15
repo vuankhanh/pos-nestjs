@@ -45,10 +45,10 @@ export class Customer implements ICustomer {
     type: String
   })
   note?: string;
-
+  
   @Prop({
     type: String,
-    enum: Object.values(CustomerLevel),
+    enum: CustomerLevel,
     default: CustomerLevel.NORMAL
   })
   level?: ICustomerLevel;
@@ -62,6 +62,8 @@ export class Customer implements ICustomer {
     this.company = customer.company;
     this.note = customer.note;
     this.level = customer.level;
+
+    console.log(Object.values(CustomerLevel))
   }
 }
 

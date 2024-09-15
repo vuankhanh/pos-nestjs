@@ -25,18 +25,21 @@ export class ProductService implements IBasicService<Product> {
         { $match: filterQuery },
         {
           $lookup: {
-            from: 'album', // Tên của bộ sưu tập Album
+            from: Album.name.toLocaleLowerCase(), // Tên của bộ sưu tập Album
             localField: 'albumId',
             foreignField: '_id',
             as: 'albumDetail'
           }
         },
         {
-          $unwind: '$albumDetail'
+          $unwind: {
+            path: '$albumDetail',
+            preserveNullAndEmptyArrays: true // Giữ lại tài liệu gốc nếu không có tài liệu nào khớp
+          }
         },
         {
           $addFields: {
-            'albumDetail.mediaItems': { $size: '$albumDetail.media' }
+            'albumDetail.mediaItems': { $size: { $ifNull: ['$albumDetail.media', []] } }
           }
         },
         {

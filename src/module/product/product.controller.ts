@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { ProductDto, UpdateProductDto } from './dto/product.dto';
 import { Product } from './schema/product.schema';
@@ -19,11 +19,10 @@ export class ProductController {
   ) { }
 
   @Get()
-  
   async getAll(
     @Query('name') name: string,
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('size', ParseIntPipe) size: number = 10
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ) {
     const filterQuery = {};
     if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
@@ -69,7 +68,7 @@ export class ProductController {
   ) {
     const filterQuery = { _id: id };
     const data: Partial<Product> = productDto;
-    if (productDto.albumId) data.updateAlbumId =productDto.albumId;
+    if (productDto.albumId) data.albumId = ObjectId.createFromHexString(productDto.albumId);
     
     return await this.productService.modify(filterQuery, data);
   }

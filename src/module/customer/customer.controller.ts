@@ -1,7 +1,7 @@
-import { Body, Controller, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, HttpCode, Param, ParseIntPipe, Patch, Post, Put, Query, UploadedFile, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { CustomerService } from './customer.service';
-import { CustomerDto } from './dto/customer.dto';
+import { CustomerDto, UpdateCustomerDto } from './dto/customer.dto';
 import { Customer } from './schema/customer.schema';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -24,8 +24,8 @@ export class CustomerController {
   @Get()
   async getAll(
     @Query('name') nameOrPhoneNumber: string,
-    @Query('page', ParseIntPipe) page: number = 1,
-    @Query('size', ParseIntPipe) size: number = 10
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
+    @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ) {
     const filterQuery = {};
     if (nameOrPhoneNumber) filterQuery['$or'] = [
@@ -81,7 +81,7 @@ export class CustomerController {
   @Patch(':id')
   async modify(
     @Param('id', new ParseObjectIdPipe()) id: string,
-    @Body() customerDto: Partial<CustomerDto>
+    @Body() customerDto: UpdateCustomerDto
   ) {
     const filterQuery = { _id: id };
     const data: Partial<Customer> = customerDto;
