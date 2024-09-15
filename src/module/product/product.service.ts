@@ -39,7 +39,8 @@ export class ProductService implements IBasicService<Product> {
         },
         {
           $addFields: {
-            'albumDetail.mediaItems': { $size: { $ifNull: ['$albumDetail.media', []] } }
+            'albumDetail.mediaItems': { $size: { $ifNull: ['$albumDetail.media', []] } },
+            'albumDetail.thumbnail': { $arrayElemAt: ["$albumDetail.media.thumbnailUrl", 0] }
           }
         },
         {
