@@ -17,7 +17,7 @@ export class ProductService implements IBasicService<Product> {
     await product.save();
     return product;
   }
-
+  
   async getAll(filterQuery: FilterQuery<Product>, page: number, size: number): Promise<{ data: FlattenMaps<Product>[]; paging: IPaging; }> {
     const countTotal = await this.productModel.countDocuments(filterQuery);
     const productAggregate = await this.productModel.aggregate(

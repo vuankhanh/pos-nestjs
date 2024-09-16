@@ -41,7 +41,7 @@ export class AlbumController {
 
   @Get('detail')
   async getDetail(
-    @Query('id') id: string,
+    @Query('id', new ParseObjectIdPipe()) id: string,
     @Query('route') route: string
   ) {
     const filterQuery = {};
