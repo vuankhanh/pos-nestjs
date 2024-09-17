@@ -1,14 +1,11 @@
 
-import { IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsMongoId, IsOptional, IsString } from "class-validator";
 import { IOrder, IOrderItem, TOrderStatus } from "../../../shared/interface/order.interface";
 import { TPaymentMethod } from "../../../shared/interface/payment.interface";
 import { PaymentMethod } from "src/constant/payment.constant";
 import { OrderStatus } from "src/constant/status.constant";
 import { IsValid } from "../../../shared/custom-validator/custom-validator";
 import { PartialType } from "@nestjs/mapped-types";
-import { Types } from "mongoose";
-import { Transform } from "class-transformer";
-import { ObjectId } from "mongodb";
 
 const validateOrderItems = (orderItems: IOrderItem[]) => {
   return Array.isArray(orderItems) && orderItems.length > 0 && orderItems.every(item => 

@@ -69,9 +69,6 @@ export class OrderController {
       customerId: orderDto.customerId ? ObjectId.createFromHexString(orderDto.customerId) : undefined
     };
 
-    console.log(data);
-    
-
     return await this.orderService.modify(filterQuery, data);
   }
 

@@ -41,12 +41,13 @@ export class AlbumController {
 
   @Get('detail')
   async getDetail(
-    @Query('id', new ParseObjectIdPipe()) id: string,
-    @Query('route') route: string
+    @Query('id', new ParseObjectIdPipe()) id?: string,
+    @Query('route') route?: string
   ) {
     const filterQuery = {};
     if (id) filterQuery['_id'] = id;
     else if (route) filterQuery['route'] = route;
+    
     return await this.albumService.getDetail(filterQuery);
   }
 

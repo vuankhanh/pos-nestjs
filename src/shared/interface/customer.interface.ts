@@ -3,7 +3,7 @@ import { CustomerLevel } from "src/constant/customer.constant";
 export interface ICustomer {
   name: string;
   phoneNumber: string;
-  address: string;
+  address?: string;
   email?: string;
   dob?: string;
   company?: string;

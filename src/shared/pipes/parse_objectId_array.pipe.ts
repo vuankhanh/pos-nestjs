@@ -4,10 +4,13 @@ import { ObjectId } from 'mongodb';
 @Injectable()
 export class ParseObjectIdPipe implements PipeTransform {
   transform(value: any, metadata: ArgumentMetadata) {
+    if(!value){
+      return value;
+    }
     if (!ObjectId.isValid(value)) {
       throw new BadRequestException(`${value} is not a valid MongoDB ID`);
     }
-    return ObjectId.createFromHexString(value);
+    return ObjectId.createFromHexString(value); 
   }
 }
 
@@ -15,6 +18,9 @@ export class ParseObjectIdPipe implements PipeTransform {
 export class ParseObjectIdArrayPipe implements PipeTransform {
   constructor(private readonly propertyTransform: string) { }
   transform(value: any, metadata: ArgumentMetadata) {
+    if(!value){
+      return value;
+    }
     value[this.propertyTransform] = value[this.propertyTransform].map((id: string) => ObjectId.createFromHexString(id))
     return value;
   }
