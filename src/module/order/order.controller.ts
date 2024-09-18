@@ -41,7 +41,7 @@ export class OrderController {
     @Body() orderDto: OrderDto
   ) {
     const order = new Order(orderDto);
-    order.updateCustomerId = orderDto.customerId;
+    if(orderDto.customerId) order.updateCustomerId = orderDto.customerId;
 
     return await this.orderService.create(order);
   }

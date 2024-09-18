@@ -1,5 +1,5 @@
 
-import { IsEnum, IsMongoId, IsOptional, IsString } from "class-validator";
+import { IsEnum, IsMongoId, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 import { IOrder, IOrderItem, TOrderStatus } from "../../../shared/interface/order.interface";
 import { TPaymentMethod } from "../../../shared/interface/payment.interface";
 import { PaymentMethod } from "src/constant/payment.constant";
@@ -8,7 +8,8 @@ import { IsValid } from "../../../shared/custom-validator/custom-validator";
 import { PartialType } from "@nestjs/mapped-types";
 
 const validateOrderItems = (orderItems: IOrderItem[]) => {
-  return Array.isArray(orderItems) && orderItems.length > 0 && orderItems.every(item => 
+  return Array.isArray(orderItems) && orderItems.length > 0 && orderItems.every(item =>
+    typeof item.productCode === 'string' &&
     typeof item.productName === 'string' &&
     typeof item.quantity === 'number' &&
     typeof item.unit === 'string' &&
@@ -17,22 +18,32 @@ const validateOrderItems = (orderItems: IOrderItem[]) => {
 };
 
 export class OrderDto implements IOrder {  
+  @IsNotEmpty({ message: 'The orderItems is required' })
   @IsValid(validateOrderItems, { message: 'Order items are not valid' })
   orderItems: IOrderItem[];
 
+  @IsNotEmpty({ message: 'The status is required' })
   @IsEnum(OrderStatus, { message: 'The status is not valid' })
   status: TOrderStatus;
 
-  @IsOptional()
+  @IsNotEmpty({ message: 'The paymentMethod is required' })
   @IsEnum(PaymentMethod, { message: 'The paymentMethod is not valid' })
-  paymentMethod?: TPaymentMethod;
+  paymentMethod: TPaymentMethod;
 
-  @IsMongoId({ message: 'The customerId must be a valid ObjectId' })
-  customerId: string;
-  
-  @IsOptional()
+  @IsNotEmpty({ message: 'The deliveryFee is required' })
+  @IsNumber({}, { message: 'The total must be a number' })
+  deliveryFee: number;
+
+  @IsNotEmpty({ message: 'The discount is required' })
+  @IsNumber({}, { message: 'The discount must be a number' })
+  discount: number;
+
   @IsString({ message: 'The note must be a string' })
-  note?: string;
+  note: string;
+
+  @IsOptional()
+  @IsMongoId({ message: 'The customerId must be a valid ObjectId' })
+  customerId?: string;
 }
 
 export class UpdateOrderDto extends PartialType(OrderDto) {}

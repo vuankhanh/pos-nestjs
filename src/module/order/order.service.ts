@@ -40,6 +40,25 @@ export class OrderService implements IBasicService<Order> {
             preserveNullAndEmptyArrays: true // Giữ lại tài liệu gốc nếu không có tài liệu nào khớp
           }
         },
+        {
+          $addFields: {
+            'productName': {
+              $ifNull: [
+                { $arrayElemAt: ["$orderItems.productName", 0] }, null
+              ]
+            },
+            'productThumbnail': {
+              $ifNull: [
+                { $arrayElemAt: ["$orderItems.productThumbnail", 0] }, null
+              ]
+            },
+            'productQuantity': {
+              $ifNull: [
+                { $sum: "$orderItems.quantity" }, 0
+              ]
+            },
+          }
+        },
         { $skip: size * (page - 1) },
         { $limit: size },
         {

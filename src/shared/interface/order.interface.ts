@@ -6,11 +6,14 @@ export type TOrderStatus = `${OrderStatus}`;
 export interface IOrder {
   orderItems: IOrderItem[];
   status: TOrderStatus;
-  paymentMethod?: TPaymentMethod;
-  note?: string;
+  paymentMethod: TPaymentMethod;
+  note: string;
+  discount: number;
+  deliveryFee: number;
 }
 
 export interface IOrderItem {
+  productThumbnail: string;
   productCode: string;
   productName: string;
   quantity: number;

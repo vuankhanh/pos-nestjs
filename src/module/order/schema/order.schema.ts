@@ -7,6 +7,7 @@ import { TPaymentMethod } from "src/shared/interface/payment.interface";
 import { ObjectId } from "mongodb";
 import { v4 as uuidv4 } from 'uuid';
 import { OrderItem } from "./order_product_item.schema";
+import { PaymentMethod } from "src/constant/payment.constant";
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -24,8 +25,14 @@ export class Order implements IOrder {
   @Prop({ type: Number, required: true })
   total: number;
 
-  @Prop({ type: String })
-  paymentMethod?: TPaymentMethod;
+  @Prop({ type: Number, required: true })
+  discount: number;
+
+  @Prop({ type: Number, required: true })
+  deliveryFee: number;
+
+  @Prop({ type: String, enum: PaymentMethod, required: true })
+  paymentMethod: TPaymentMethod;
 
   @Prop({ type: String })
   customerName?: string;
@@ -36,17 +43,22 @@ export class Order implements IOrder {
   @Prop({ type: String })
   customerAddress?: string;
 
+  @Prop({ type: String })
+  customerDeliveryAddress?: string;
+
   @Prop({ type: Types.ObjectId, ref: Customer.name })
   customerId?: Types.ObjectId;
 
   @Prop({ type: String })
-  note?: string;
+  note: string;
 
   constructor(order: IOrder) {
     this.orderCode = this.generateOrderCode();
     this.orderItems = order.orderItems;
     this.status = order.status;
     this.total = this.calculateTotal(order.orderItems);
+    this.discount = order.discount;
+    this.deliveryFee = order.deliveryFee;
     this.paymentMethod = order.paymentMethod;
     this.note = order.note;
   }
@@ -70,6 +82,10 @@ export class Order implements IOrder {
     this.customerName = customer.name;
     this.customerPhoneNumber = customer.phoneNumber;
     this.customerAddress = customer.address;
+  }
+
+  set updateCustomerDeliveryAddress(deliveryAddress: string) {
+    this.customerDeliveryAddress = deliveryAddress;
   }
 }
 
