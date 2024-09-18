@@ -57,6 +57,20 @@ export class OrderService implements IBasicService<Order> {
                 { $sum: "$orderItems.quantity" }, 0
               ]
             },
+            'subTotal': {
+              $ifNull: [
+                {
+                  $sum: {
+                    $map: {
+                      input: "$orderItems",
+                      as: "item",
+                      in: { $multiply: ["$$item.price", "$$item.quantity"] }
+                    }
+                  }
+                },
+                0
+              ]
+            }
           }
         },
         { $skip: size * (page - 1) },
@@ -135,7 +149,25 @@ export class OrderService implements IBasicService<Order> {
             path: '$customerDetail',
             preserveNullAndEmptyArrays: true // Giữ lại tài liệu gốc nếu không có tài liệu nào khớp
           }
-        }
+        },
+        {
+          $addFields: {
+            'subTotal': {
+              $ifNull: [
+                {
+                  $sum: {
+                    $map: {
+                      input: "$orderItems",
+                      as: "item",
+                      in: { $multiply: ["$$item.price", "$$item.quantity"] }
+                    }
+                  }
+                },
+                0
+              ]
+            }
+          }
+        },
       ]
     ).then((data) => data[0]);
   }
