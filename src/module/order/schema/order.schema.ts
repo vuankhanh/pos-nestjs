@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 import { v4 as uuidv4 } from 'uuid';
 import { OrderItem } from "./order_product_item.schema";
 import { PaymentMethod } from "src/constant/payment.constant";
+import { OrderUtil } from "src/shared/util/order.util";
 
 export type OrderDocument = HydratedDocument<Order>;
 
@@ -47,14 +48,14 @@ export class Order implements IOrder {
   customerDeliveryAddress?: string;
 
   @Prop({ type: Types.ObjectId, ref: Customer.name })
-  customerId?: Types.ObjectId;
+  customerId?: Types.ObjectId | string;
 
   @Prop({ type: String })
   note: string;
 
   constructor(order: IOrder) {
     this.orderCode = this.generateOrderCode();
-    this.orderItems = order.orderItems;
+    this.orderItems = OrderUtil.transformOrderItems(order.orderItems);
     this.status = order.status;
     this.total = this.calculateTotal(order.orderItems);
     this.discount = order.discount;
@@ -87,6 +88,11 @@ export class Order implements IOrder {
   set updateCustomerDeliveryAddress(deliveryAddress: string) {
     this.customerDeliveryAddress = deliveryAddress;
   }
+
+  set updateTotal(orderItems: IOrderItem[]) {
+    this.total = this.calculateTotal(orderItems);
+  }
+
 }
 
 export const orderSchema = SchemaFactory.createForClass(Order);

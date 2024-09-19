@@ -8,5 +8,6 @@ import { PdfModule } from './pdf/pdf.module';
   imports: [PdfModule],
   controllers: [PrinterController],
   providers: [ConfigService, PrinterService],
+  exports: [PrinterService],
 })
 export class PrinterModule {}

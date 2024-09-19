@@ -5,11 +5,14 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { Customer } from '../customer/schema/customer.schema';
+import { PrinterService } from '../printer/printer.service';
+import { Template } from 'src/shared/interface/template.interface';
 
 @Injectable()
 export class OrderService implements IBasicService<Order> {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
+    private readonly PrinterService: PrinterService
   ) { }
 
   async create(data: Order): Promise<OrderDocument> {
@@ -116,6 +119,10 @@ export class OrderService implements IBasicService<Order> {
     return await this.tranformToDetaiData(filterQuery);
   }
 
+  async findById(id: string): Promise<OrderDocument> {
+    return await this.orderModel.findById(id);
+  }
+
   async replace(filterQuery: FilterQuery<Order>, data: Order): Promise<OrderDocument> {
     await this.orderModel.findOneAndReplace(filterQuery, data);
     const product = await this.tranformToDetaiData(filterQuery);
@@ -128,8 +135,12 @@ export class OrderService implements IBasicService<Order> {
     return product;
   }
 
+  print(temp: Template) {
+    return this.PrinterService.print(temp);
+  }
+
   async remove(filterQuery: FilterQuery<Order>): Promise<OrderDocument> {
-    return await this.orderModel.findOneAndDelete(filterQuery);
+    return null
   }
 
   private async tranformToDetaiData(filterQuery: FilterQuery<Order>): Promise<OrderDocument> {

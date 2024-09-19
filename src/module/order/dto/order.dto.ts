@@ -6,6 +6,7 @@ import { PaymentMethod } from "src/constant/payment.constant";
 import { OrderStatus } from "src/constant/status.constant";
 import { IsValid } from "../../../shared/custom-validator/custom-validator";
 import { PartialType } from "@nestjs/mapped-types";
+import { OrderItem } from "../schema/order_product_item.schema";
 
 const validateOrderItems = (orderItems: IOrderItem[]) => {
   return Array.isArray(orderItems) && orderItems.length > 0 && orderItems.every(item =>
@@ -20,7 +21,7 @@ const validateOrderItems = (orderItems: IOrderItem[]) => {
 export class OrderDto implements IOrder {  
   @IsNotEmpty({ message: 'The orderItems is required' })
   @IsValid(validateOrderItems, { message: 'Order items are not valid' })
-  orderItems: IOrderItem[];
+  orderItems: OrderItem[];
 
   @IsNotEmpty({ message: 'The status is required' })
   @IsEnum(OrderStatus, { message: 'The status is not valid' })
