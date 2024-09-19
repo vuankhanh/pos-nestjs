@@ -24,6 +24,9 @@ export class Order implements IOrder {
   status: TOrderStatus;
 
   @Prop({ type: Number, required: true })
+  subTotal: number;
+
+  @Prop({ type: Number, required: true })
   total: number;
 
   @Prop({ type: Number, required: true })
@@ -57,7 +60,8 @@ export class Order implements IOrder {
     this.orderCode = this.generateOrderCode();
     this.orderItems = OrderUtil.transformOrderItems(order.orderItems);
     this.status = order.status;
-    this.total = this.calculateTotal(order.orderItems);
+    this.subTotal = OrderUtil.calculateSubTotal(this.orderItems);
+    this.total = OrderUtil.calculateTotal(this.subTotal, order.deliveryFee, order.discount);
     this.discount = order.discount;
     this.deliveryFee = order.deliveryFee;
     this.paymentMethod = order.paymentMethod;
@@ -69,10 +73,6 @@ export class Order implements IOrder {
     const date = new Date().toISOString().slice(0, 10).replace(/-/g, ''); // Lấy ngày hiện tại và chuyển định dạng thành 'yyyymmdd'
     const randomNumber = uuidv4().split('-')[0]; // Lấy một phần của UUID để làm số ngẫu nhiên
     return `${prefix}${date}${randomNumber}`;
-  }
-
-  private calculateTotal(orderItems: IOrderItem[]): number {
-    return orderItems.reduce((total: number, item: IOrderItem) => total + item.price * item.quantity, 0);
   }
 
   set updateCustomerId(customerId: string) {
@@ -87,10 +87,6 @@ export class Order implements IOrder {
 
   set updateCustomerDeliveryAddress(deliveryAddress: string) {
     this.customerDeliveryAddress = deliveryAddress;
-  }
-
-  set updateTotal(orderItems: IOrderItem[]) {
-    this.total = this.calculateTotal(orderItems);
   }
 
 }

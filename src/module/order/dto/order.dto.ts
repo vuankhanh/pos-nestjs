@@ -45,6 +45,22 @@ export class OrderDto implements IOrder {
   @IsOptional()
   @IsMongoId({ message: 'The customerId must be a valid ObjectId' })
   customerId?: string;
+
+  @IsOptional()
+  @IsString({ message: 'The customer name must be a string' })
+  customerName?: string;
+  
+  @IsOptional()
+  @IsString({ message: 'The customerName must be a string' })
+  customerPhoneNumber: string;
+
+  @IsOptional()
+  @IsString({ message: 'The customer address must be a string' })
+  customerAddress?: string;
+
+  @IsOptional()
+  @IsString({ message: 'The deliveryAddress must be a string' })
+  customerDeliveryAddress?: string;
 }
 
 export class UpdateOrderDto extends PartialType(OrderDto) {}

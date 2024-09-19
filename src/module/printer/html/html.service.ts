@@ -14,7 +14,7 @@ export class HtmlService {
     const $ = cheerio.load(html);
     $('#cus_name').text(data.order.customerName);
     $('#cus_phone_number').text(data.order.customerPhoneNumber);
-    $('#cus_address').text(data.order.customerAddress);
+    $('#cus_address').text(data.order.customerDeliveryAddress);
     $('#order').html(this.createOrderList(data.order));
     $('#order_total_bill').html(await this.createTotalBill(data.order));
 
@@ -50,16 +50,37 @@ export class HtmlService {
   }
 
   private async createTotalBill(order: Order): Promise<string> {
-    const total = order.orderItems.reduce((acc, item) => acc + item.price * item.quantity, 0);
-
+    const subTotal = order.subTotal;
+    const deliveryFee = order.deliveryFee;
+    const discount = order.discount;
+    const total = order.total;
+    
     const qrcode = await this.vietqrService.createVietQRCode(total, order.orderCode);
     
-    const paymentQrCodeElement = `<img src="${qrcode}" style="width: 100px; height: 100px;"/>`;
+    const paymentQrCodeElement = `
+    <div class="qr-code-container">
+      <img class="qr-code-img" src="${qrcode}"/>
+    </div>
+    `;
     
     const orderTotalBillTableElement = `
-    <div style="display: flex; width: 100%; justify-content: flex-end; align-items: center;">
-      <span style="margin-right: 15px;">Tổng: </span>
-      <b>${total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</b>
+    <div class="info-list">
+      <div class="info-list__item">
+        <div class="info-list__item__label">Tổng tiền hàng: </div>
+        <div class="info-list__item__value">${subTotal.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</div>
+      </div>
+      <div class="info-list__item">
+        <div class="info-list__item__label">Phí vận chuyển: </div>
+        <div class="info-list__item__value">${deliveryFee.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</div>
+      </div>
+      <div class="info-list__item">
+        <div class="info-list__item__label">Chiết khấu: </div>
+        <div class="info-list__item__value">${discount + '%'}</div>
+      </div>
+      <div class="info-list__item">
+        <div class="info-list__item__label">Tổng cộng: </div>
+        <div class="info-list__item__value"><b>${total.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}</b></div>
+      </div>
     </div>
     `;
     

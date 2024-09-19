@@ -87,7 +87,21 @@ export class OrderController {
 
     if (orderDto.customerId) data.customerId = ObjectId.createFromHexString(orderDto.customerId);
 
-    console.log(data);
+    if(orderDto.customerName){
+      data.customerName = orderDto.customerName;
+    }
+
+    if(orderDto.customerAddress){
+      data.customerAddress = orderDto.customerAddress;
+    }
+
+    if(orderDto.customerDeliveryAddress){
+      data.customerDeliveryAddress = orderDto.customerDeliveryAddress;
+    }
+
+    if(orderDto.customerPhoneNumber){
+      data.customerPhoneNumber = orderDto.customerPhoneNumber;
+    }
     
     return await this.orderService.modify(filterQuery, data);
   }
@@ -110,6 +124,15 @@ export class OrderController {
       throw new BadRequestException('Order status must be CONFIRMED, SHIPPING, or COMPLETED to print');
     }
     const order: Order = new Order(orderDetail);
+
+    const customerInfo = {
+      name: orderDetail.customerName,
+      phoneNumber: orderDetail.customerPhoneNumber,
+      address: orderDetail.customerAddress,
+    }
+    order.updateCustomerInfo = customerInfo;
+    order.updateCustomerDeliveryAddress = orderDetail.customerDeliveryAddress;
+    
     const footer: IFooterTemplate = this.configService.get<IFooterTemplate>('brand');
     const template: Template = new Template(order, footer);
     return await this.orderService.print(template);

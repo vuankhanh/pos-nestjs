@@ -13,9 +13,13 @@ export class PrinterService {
   ) { }
 
   async print(temp: Template): Promise<Uint8Array> {
+    console.log('print', temp);
+    
     const printerName = this.configService.get<string>('printer.name');
     const assetsFolder = this.configService.get<string>('folder.assets');
-    const htmlFile = assetsFolder+'/template/template_default.html'
+    
+    const htmlFile = assetsFolder+`/template/template_${temp.order.customerPhoneNumber  ? 'default' : 'walk_in_customer'}.html` 
+
     const readHtml = await FileUtil.read(htmlFile); 
     const result = await this.pdfService.createPdfFromHTML(readHtml, temp);
     
