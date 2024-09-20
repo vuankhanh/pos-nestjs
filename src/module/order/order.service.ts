@@ -7,6 +7,7 @@ import { IPaging } from 'src/shared/interface/paging.interface';
 import { Customer } from '../customer/schema/customer.schema';
 import { PrinterService } from '../printer/printer.service';
 import { Template } from 'src/shared/interface/template.interface';
+import { OrderStatus } from 'src/constant/status.constant';
 
 @Injectable()
 export class OrderService implements IBasicService<Order> {
@@ -25,6 +26,7 @@ export class OrderService implements IBasicService<Order> {
   }
 
   async getAll(filterQuery: FilterQuery<Order>, page: number, size: number): Promise<{ data: OrderDocument[]; paging: IPaging; }> {
+    filterQuery.status = { $ne: OrderStatus.CANCELED };
     const countTotal = await this.orderModel.countDocuments(filterQuery);
     const orderAggregate = await this.orderModel.aggregate(
       [

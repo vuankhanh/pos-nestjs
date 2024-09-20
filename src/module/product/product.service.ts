@@ -108,7 +108,13 @@ export class ProductService implements IBasicService<Product> {
             path: '$albumDetail',
             preserveNullAndEmptyArrays: true // Giữ lại tài liệu gốc nếu không có tài liệu nào khớp
           }
-        }
+        },
+        {
+          $addFields: {
+            'albumDetail.mediaItems': { $size: { $ifNull: ['$albumDetail.media', []] } },
+            'albumDetail.thumbnail': { $arrayElemAt: ["$albumDetail.media.thumbnailUrl", 0] }
+          }
+        },
       ]
     ).then((data) => data[0]);
   }
