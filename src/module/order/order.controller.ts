@@ -47,6 +47,7 @@ export class OrderController {
     @Body() orderDto: OrderDto
   ) {
     const order = new Order(orderDto);
+    order.updateCustomerDeliveryAddress = orderDto.customerDeliveryAddress;
     if (orderDto.customerId) order.updateCustomerId = orderDto.customerId;
 
     return await this.orderService.create(order);
@@ -96,14 +97,10 @@ export class OrderController {
       data.customerAddress = orderDto.customerAddress;
     }
 
-    if(orderDto.customerDeliveryAddress){
-      data.customerDeliveryAddress = orderDto.customerDeliveryAddress;
-    }
-
     if(orderDto.customerPhoneNumber){
       data.customerPhoneNumber = orderDto.customerPhoneNumber;
     }
-    
+
     return await this.orderService.modify(filterQuery, data);
   }
 
