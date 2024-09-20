@@ -13,7 +13,7 @@ import { AuthGuard } from 'src/shared/guards/auth.guard';
 //2.Interceptors: Được sử dụng để thay đổi hoặc mở rộng hành vi của các method.
 //3. Pipes: Được sử dụng để biến đổi hoặc xác thực dữ liệu.
 @Controller('customer')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @UseInterceptors(FormatResponseInterceptor)
 @UsePipes(ValidationPipe)
 export class CustomerController {

@@ -10,6 +10,7 @@ import configuration from './config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AlbumModule } from './module/album/album.module';
 import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './module/auth/auth.module';
 
 @Module({
   imports: [
@@ -26,7 +27,8 @@ import { JwtModule } from '@nestjs/jwt';
     CustomerModule,
     OrderModule,
     PaymentModule,
-    PrinterModule
+    PrinterModule,
+    AuthModule
   ],
   controllers: [],
   providers: [],

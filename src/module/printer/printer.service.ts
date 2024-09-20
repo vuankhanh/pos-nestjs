@@ -23,9 +23,9 @@ export class PrinterService {
     const readHtml = await FileUtil.read(htmlFile); 
     const result = await this.pdfService.createPdfFromHTML(readHtml, temp);
     
-    // await this.printPdf(result.filePath, printerName).then(async _ => {
-    //   await FileUtil.remove(result.filePath);
-    // });
+    await this.printPdf(result.filePath, printerName).then(async _ => {
+      await FileUtil.remove(result.filePath);
+    });
 
     return result.buffer;
   }

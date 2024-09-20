@@ -24,7 +24,7 @@ export class FormatResponseInterceptor<T>
     return next.handle().pipe(
       map((data) => {
         if (!data) {
-          throw new BadRequestException('Data not found');
+          throw new BadRequestException('Không có dữ liệu');
         }
         return {
           statusCode: context.switchToHttp().getResponse().statusCode,

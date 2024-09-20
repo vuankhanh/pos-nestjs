@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { BadRequestException, Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
@@ -9,9 +9,10 @@ import { IFooterTemplate, Template } from 'src/shared/interface/template.interfa
 import { ConfigService } from '@nestjs/config';
 import { OrderStatus } from 'src/constant/status.constant';
 import { OrderUtil } from 'src/shared/util/order.util';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 
 @Controller('order')
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @UseInterceptors(FormatResponseInterceptor)
 @UsePipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }))
 export class OrderController {

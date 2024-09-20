@@ -19,7 +19,7 @@ import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
 
 @Controller('album')
 @UseInterceptors(FormatResponseInterceptor)
-// @UseGuards(AuthGuard)
+@UseGuards(AuthGuard)
 @UsePipes(ValidationPipe)
 export class AlbumController {
   constructor(
