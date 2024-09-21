@@ -5,15 +5,16 @@ import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model, Types } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { Customer } from '../customer/schema/customer.schema';
-import { PrinterService } from '../printer/printer.service';
 import { Template } from 'src/shared/interface/template.interface';
 import { OrderStatus } from 'src/constant/status.constant';
+import axios from 'axios';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class OrderService implements IBasicService<Order> {
   constructor(
     @InjectModel(Order.name) private orderModel: Model<Order>,
-    private readonly PrinterService: PrinterService
+    private configService: ConfigService
   ) { }
 
   async create(data: Order): Promise<OrderDocument> {
@@ -137,8 +138,15 @@ export class OrderService implements IBasicService<Order> {
     return product;
   }
 
-  print(temp: Template) {
-    return this.PrinterService.print(temp);
+  async print(temp: Template) {
+    // return this.PrinterService.print(temp);
+    const protocol = this.configService.get('printer.protocol');
+    const host = this.configService.get('printer.host');
+    const port = this.configService.get('printer.port');
+
+    const url = `${protocol}://${host}:${port}/api/print`;
+    
+    return await axios.post(url, temp).then(res => res.data);
   }
 
   async remove(filterQuery: FilterQuery<Order>): Promise<OrderDocument> {

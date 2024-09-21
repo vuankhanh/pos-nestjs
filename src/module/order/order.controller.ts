@@ -47,7 +47,13 @@ export class OrderController {
     @Body() orderDto: OrderDto
   ) {
     const order = new Order(orderDto);
-    order.updateCustomerDeliveryAddress = orderDto.customerDeliveryAddress;
+    if (orderDto.customerDeliveryAddress) order.updateCustomerDeliveryAddress = orderDto.customerDeliveryAddress;
+    if (orderDto.customerName) order.updateCustomerInfo = {
+      name: orderDto.customerName,
+      phoneNumber: orderDto.customerPhoneNumber,
+      address: orderDto.customerAddress
+    };
+
     if (orderDto.customerId) order.updateCustomerId = orderDto.customerId;
 
     return await this.orderService.create(order);
@@ -71,7 +77,7 @@ export class OrderController {
     @Body() orderDto: UpdateOrderDto
   ) {
     const filterQuery = { _id: id };
-    
+
     const data: Partial<Order> = orderDto;
     // Lấy đơn hàng hiện tại từ cơ sở dữ liệu
     const currentOrder = await this.orderService.findById(id);
@@ -89,15 +95,15 @@ export class OrderController {
 
     if (orderDto.customerId) data.customerId = ObjectId.createFromHexString(orderDto.customerId);
 
-    if(orderDto.customerName){
+    if (orderDto.customerName) {
       data.customerName = orderDto.customerName;
     }
 
-    if(orderDto.customerAddress){
+    if (orderDto.customerAddress) {
       data.customerAddress = orderDto.customerAddress;
     }
 
-    if(orderDto.customerPhoneNumber){
+    if (orderDto.customerPhoneNumber) {
       data.customerPhoneNumber = orderDto.customerPhoneNumber;
     }
 
@@ -130,7 +136,7 @@ export class OrderController {
     }
     order.updateCustomerInfo = customerInfo;
     order.updateCustomerDeliveryAddress = orderDetail.customerDeliveryAddress;
-    
+
     const footer: IFooterTemplate = this.configService.get<IFooterTemplate>('brand');
     const template: Template = new Template(order, footer);
     return await this.orderService.print(template);

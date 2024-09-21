@@ -3,7 +3,6 @@ import { OrderController } from './order.controller';
 import { OrderService } from './order.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Order, orderSchema } from './schema/order.schema';
-import { PrinterModule } from '../printer/printer.module';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
@@ -14,9 +13,7 @@ import { ConfigService } from '@nestjs/config';
         schema: orderSchema,
         collection: Order.name.toLowerCase()
       }
-    ]),
-
-    PrinterModule
+    ])
   ],
   controllers: [OrderController],
   providers: [OrderService, ConfigService]

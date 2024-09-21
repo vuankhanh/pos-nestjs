@@ -4,7 +4,6 @@ import { CustomerModule } from './module/customer/customer.module';
 import { OrderModule } from './module/order/order.module';
 import { PaymentModule } from './module/payment/payment.module';
 import { MongodbProvider } from './provider/database/mongodb.provider';
-import { PrinterModule } from './module/printer/printer.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import configuration from './config/configuration';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -27,7 +26,6 @@ import { AuthModule } from './module/auth/auth.module';
     CustomerModule,
     OrderModule,
     PaymentModule,
-    PrinterModule,
     AuthModule
   ],
   controllers: [],
