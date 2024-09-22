@@ -1,0 +1,84 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - staging
+
+jobs:
+  build-and-deploy:
+    runs-on: [self-hosted, Linux, X64, staging]
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build project
+      run: npm run build
+
+    - name: Rename old project directory if exists
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        if [ -d "$DEPLOY_DIR" ]; then
+          mv $DEPLOY_DIR "${DEPLOY_DIR}_old"
+        fi
+
+    - name: Copy files to deployment directory
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        mkdir -p $DEPLOY_DIR
+        cp -r dist $DEPLOY_DIR
+        cp -r ASSETS $DEPLOY_DIR
+        cp package.json $DEPLOY_DIR
+        cp package-lock.json $DEPLOY_DIR
+
+    - name: Install production dependencies
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        cd $DEPLOY_DIR
+        npm install --only=production
+    
+    - name: Create .env file
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        echo "Creating .env file"
+        echo "ACCESS_TOKEN_LIFE=${{ secrets.ACCESS_TOKEN_LIFE }}" >> .env
+        echo "ACCESS_TOKEN_SECRET=\"${{ secrets.ACCESS_TOKEN_SECRET }}\"" >> .env
+        echo "ALBUM_FOLDER=${{ secrets.ALBUM_FOLDER }}" >> .env
+        echo "DEV_APP_PORT=${{ secrets.DEV_APP_PORT }}" >> .env
+        echo "DEV_DB_HOST=${{ secrets.DEV_DB_HOST }}" >> .env
+        echo "DEV_DB_NAME=${{ secrets.DEV_DB_NAME }}" >> .env
+        echo "DEV_DB_PORT=${{ secrets.DEV_DB_PORT }}" >> .env
+        echo "DEV_PRINTER_HOST=${{ secrets.DEV_PRINTER_HOST }}" >> .env
+        echo "DEV_PRINTER_PORT=${{ secrets.DEV_PRINTER_PORT }}" >> .env
+        echo "DEV_PRINTER_PROTOCOL=${{ secrets.DEV_PRINTER_PROTOCOL }}" >> .env
+        echo "PRO_APP_PORT=${{ secrets.PRO_APP_PORT }}" >> .env
+        echo "PRO_DB_HOST=${{ secrets.PRO_DB_HOST }}" >> .env
+        echo "PRO_DB_NAME=${{ secrets.PRO_DB_NAME }}" >> .env
+        echo "PRO_DB_PORT=${{ secrets.PRO_DB_PORT }}" >> .env
+        echo "PRO_PRINTER_HOST=${{ secrets.PRO_PRINTER_HOST }}" >> .env
+        echo "PRO_PRINTER_PORT=${{ secrets.PRO_PRINTER_PORT }}" >> .env
+        echo "PRO_PRINTER_PROTOCOL=${{ secrets.PRO_PRINTER_PROTOCOL }}" >> .env
+        echo "REFRESH_TOKEN_LIFE=${{ secrets.REFRESH_TOKEN_LIFE }}" >> .env
+        echo "REFRESH_TOKEN_SECRET=\"${{ secrets.REFRESH_TOKEN_SECRET }}\"" >> .env
+
+    - name: Check and start pm2 process
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        if pm2 list | grep -q $PROJECT_NAME; then
+          pm2 reload $PROJECT_NAME
+        else
+          pm2 start "npm run start:prod:linux" --name $PROJECT_NAME
+        fi
