@@ -30,7 +30,7 @@ jobs:
         DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
         if [ -d "$DEPLOY_DIR" ]; then
           echo "Directory exists, deleting..."
-          rm -r "$PROJECT_DIR"
+          rm -rf "$DEPLOY_DIR"
         else
           echo "Directory does not exist."
         fi
