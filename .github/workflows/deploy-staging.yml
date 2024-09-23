@@ -35,53 +35,53 @@ jobs:
           echo "Directory does not exist."
         fi
 
-    # - name: Copy files to deployment directory
-    #   run: |
-    #     PROJECT_NAME=$(node -p "require('./package.json').name")
-    #     DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
-    #     mkdir -p $DEPLOY_DIR
-    #     cp -r dist $DEPLOY_DIR
-    #     cp package.json $DEPLOY_DIR
-    #     cp package-lock.json $DEPLOY_DIR
+    - name: Copy files to deployment directory
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        mkdir -p $DEPLOY_DIR
+        cp -r dist $DEPLOY_DIR
+        cp package.json $DEPLOY_DIR
+        cp package-lock.json $DEPLOY_DIR
 
-    # - name: Install production dependencies
-    #   run: |
-    #     PROJECT_NAME=$(node -p "require('./package.json').name")
-    #     DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
-    #     cd $DEPLOY_DIR
-    #     npm install --only=production
+    - name: Install production dependencies
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        cd $DEPLOY_DIR
+        npm install --only=production
     
-    # - name: Create .env file
-    #   run: |
-    #     PROJECT_NAME=$(node -p "require('./package.json').name")
-    #     DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
-    #     echo "Creating .env file"
-    #     echo "ACCESS_TOKEN_LIFE=${{ secrets.ACCESS_TOKEN_LIFE }}" >> $DEPLOY_DIR/.env
-    #     echo "ACCESS_TOKEN_SECRET=\"${{ secrets.ACCESS_TOKEN_SECRET }}\"" >> $DEPLOY_DIR/.env
-    #     echo "ALBUM_FOLDER=${{ secrets.ALBUM_FOLDER }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_APP_PORT=${{ secrets.DEV_APP_PORT }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_DB_HOST=${{ secrets.DEV_DB_HOST }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_DB_NAME=${{ secrets.DEV_DB_NAME }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_DB_PORT=${{ secrets.DEV_DB_PORT }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_PRINTER_HOST=${{ secrets.DEV_PRINTER_HOST }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_PRINTER_PORT=${{ secrets.DEV_PRINTER_PORT }}" >> $DEPLOY_DIR/.env
-    #     echo "DEV_PRINTER_PROTOCOL=${{ secrets.DEV_PRINTER_PROTOCOL }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_APP_PORT=${{ secrets.PRO_APP_PORT }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_DB_HOST=${{ secrets.PRO_DB_HOST }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_DB_NAME=${{ secrets.PRO_DB_NAME }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_DB_PORT=${{ secrets.PRO_DB_PORT }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_PRINTER_HOST=${{ secrets.PRO_PRINTER_HOST }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_PRINTER_PORT=${{ secrets.PRO_PRINTER_PORT }}" >> $DEPLOY_DIR/.env
-    #     echo "PRO_PRINTER_PROTOCOL=${{ secrets.PRO_PRINTER_PROTOCOL }}" >> $DEPLOY_DIR/.env
-    #     echo "REFRESH_TOKEN_LIFE=${{ secrets.REFRESH_TOKEN_LIFE }}" >> $DEPLOY_DIR/.env
-    #     echo "REFRESH_TOKEN_SECRET=\"${{ secrets.REFRESH_TOKEN_SECRET }}\"" >> $DEPLOY_DIR/.env
+    - name: Create .env file
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        echo "Creating .env file"
+        echo "ACCESS_TOKEN_LIFE=${{ secrets.ACCESS_TOKEN_LIFE }}" >> $DEPLOY_DIR/.env
+        echo "ACCESS_TOKEN_SECRET=\"${{ secrets.ACCESS_TOKEN_SECRET }}\"" >> $DEPLOY_DIR/.env
+        echo "ALBUM_FOLDER=${{ secrets.ALBUM_FOLDER }}" >> $DEPLOY_DIR/.env
+        echo "DEV_APP_PORT=${{ secrets.DEV_APP_PORT }}" >> $DEPLOY_DIR/.env
+        echo "DEV_DB_HOST=${{ secrets.DEV_DB_HOST }}" >> $DEPLOY_DIR/.env
+        echo "DEV_DB_NAME=${{ secrets.DEV_DB_NAME }}" >> $DEPLOY_DIR/.env
+        echo "DEV_DB_PORT=${{ secrets.DEV_DB_PORT }}" >> $DEPLOY_DIR/.env
+        echo "DEV_PRINTER_HOST=${{ secrets.DEV_PRINTER_HOST }}" >> $DEPLOY_DIR/.env
+        echo "DEV_PRINTER_PORT=${{ secrets.DEV_PRINTER_PORT }}" >> $DEPLOY_DIR/.env
+        echo "DEV_PRINTER_PROTOCOL=${{ secrets.DEV_PRINTER_PROTOCOL }}" >> $DEPLOY_DIR/.env
+        echo "PRO_APP_PORT=${{ secrets.PRO_APP_PORT }}" >> $DEPLOY_DIR/.env
+        echo "PRO_DB_HOST=${{ secrets.PRO_DB_HOST }}" >> $DEPLOY_DIR/.env
+        echo "PRO_DB_NAME=${{ secrets.PRO_DB_NAME }}" >> $DEPLOY_DIR/.env
+        echo "PRO_DB_PORT=${{ secrets.PRO_DB_PORT }}" >> $DEPLOY_DIR/.env
+        echo "PRO_PRINTER_HOST=${{ secrets.PRO_PRINTER_HOST }}" >> $DEPLOY_DIR/.env
+        echo "PRO_PRINTER_PORT=${{ secrets.PRO_PRINTER_PORT }}" >> $DEPLOY_DIR/.env
+        echo "PRO_PRINTER_PROTOCOL=${{ secrets.PRO_PRINTER_PROTOCOL }}" >> $DEPLOY_DIR/.env
+        echo "REFRESH_TOKEN_LIFE=${{ secrets.REFRESH_TOKEN_LIFE }}" >> $DEPLOY_DIR/.env
+        echo "REFRESH_TOKEN_SECRET=\"${{ secrets.REFRESH_TOKEN_SECRET }}\"" >> $DEPLOY_DIR/.env
 
-    # - name: Check and start pm2 process
-    #   run: |
-    #     PROJECT_NAME=$(node -p "require('./package.json').name")
-    #     if ! pm2 list | grep -q $PROJECT_NAME; then
-    #       pm2 reload $PROJECT_NAME
-    #     else
-    #       pm2 start "npm run start:prod:linux" --name $PROJECT_NAME
-    #       pm2 save
-    #     fi
+    - name: Check and start pm2 process
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        if ! pm2 list | grep -q $PROJECT_NAME; then
+          pm2 reload $PROJECT_NAME
+        else
+          pm2 start "npm run start:prod:linux" --name $PROJECT_NAME
+          pm2 save
+        fi
