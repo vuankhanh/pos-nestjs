@@ -24,7 +24,7 @@ jobs:
     - name: Build project
       run: npm run build
 
-    - name: Remove old project directory if exists
+    - name: Check and replace files
       run: |
         PROJECT_NAME=$(node -p "require('./package.json').name")
         DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
