@@ -10,13 +10,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AlbumModule } from './module/album/album.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './module/auth/auth.module';
-import path from 'path';
+import { join } from "path";
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
-      envFilePath: path.join(__dirname, '.env'), //Phải định nghĩa mặc định ở đây vì khi chạy pm2 thì location (the project root directory) sẽ khác
+      envFilePath: join(__dirname, '.env'), //Phải định nghĩa mặc định ở đây vì khi chạy pm2 thì location (the project root directory) sẽ khác
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
