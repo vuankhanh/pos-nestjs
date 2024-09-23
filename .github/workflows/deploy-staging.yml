@@ -81,6 +81,10 @@ jobs:
         PROJECT_NAME=$(node -p "require('./package.json').name")
         DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
         cd $DEPLOY_DIR
-        pm2 delete -s $PROJECT_NAME || :
-        pm2 start "npm run start:prod:linux" --name $PROJECT_NAME
+        RUNNING=$(pm2 list | grep -c $PROJECT_NAME)
+        if [ "${RUNNING}" -ne 0 ]; then
+          pm2 restart $PROJECT_NAME
+        else
+          pm2 start "npm run start:prod:linux" --name $PROJECT_NAME
+        fi
         pm2 save
