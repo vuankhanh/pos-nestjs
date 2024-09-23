@@ -76,6 +76,13 @@ jobs:
         echo "REFRESH_TOKEN_LIFE=${{ secrets.REFRESH_TOKEN_LIFE }}" >> $DEPLOY_DIR/.env
         echo "REFRESH_TOKEN_SECRET=\"${{ secrets.REFRESH_TOKEN_SECRET }}\"" >> $DEPLOY_DIR/.env
 
+    - name: Verify .env file content
+      run: |
+        PROJECT_NAME=$(node -p "require('./package.json').name")
+        DEPLOY_DIR="/var/www/back-end/$PROJECT_NAME"
+        echo "Content of .env file:"
+        cat $DEPLOY_DIR/.env
+
     - name: Check and start pm2 process
       run: |
         PROJECT_NAME=$(node -p "require('./package.json').name")
