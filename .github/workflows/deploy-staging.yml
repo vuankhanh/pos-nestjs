@@ -32,9 +32,9 @@ jobs:
           echo "Directory exists, deleting..."
           rm -rf "$DEPLOY_DIR/dist"
           rm -rf "$DEPLOY_DIR/node_modules"
-          rm -f package.json
-          rm -f package-lock.json
-          rm -f .env
+          rm -f "$DEPLOY_DIR/package.json"
+          rm -f "$DEPLOY_DIR/package-lock.json"
+          rm -f "$DEPLOY_DIR/.env"
 
           echo "Directory exists, copying..."
           cp -r dist $DEPLOY_DIR
