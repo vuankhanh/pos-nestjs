@@ -62,8 +62,6 @@ export class Customer implements ICustomer {
     this.company = customer.company;
     this.note = customer.note;
     this.level = customer.level;
-
-    console.log(Object.values(CustomerLevel))
   }
 }
 
