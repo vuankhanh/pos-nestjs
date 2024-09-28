@@ -1,7 +1,8 @@
-import { BadRequestException, CanActivate, ExecutionContext, Injectable, InternalServerErrorException } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AlbumService } from '../album.service';
 import { ConfigService } from '@nestjs/config';
 import { ObjectId } from 'mongodb';
+import { CustomBadRequestException, CustomInternalServerErrorException } from 'src/shared/exception/custom-exception';
 @Injectable()
 export class ValidateModifyAlbumGuard implements CanActivate {
   constructor(
@@ -23,11 +24,11 @@ export class ValidateModifyAlbumGuard implements CanActivate {
     const album = await this.albumService.getDetail(filterQuery);
     
     if (!album) {
-      throw new BadRequestException('Album not found');
+      throw new CustomBadRequestException('Không tìm thấy Album này');
     };
 
     if(!album.relativePath) {
-      throw new InternalServerErrorException('Album relative path not found');
+      throw new CustomInternalServerErrorException('Album relative path not found');
     }
 
     const albumFolder = this.configService.get('folder.album');

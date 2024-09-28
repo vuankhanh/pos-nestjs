@@ -1,8 +1,9 @@
-import { Inject, Injectable, InternalServerErrorException, PipeTransform, Scope } from '@nestjs/common';
+import { Inject, Injectable, PipeTransform, Scope } from '@nestjs/common';
 
 import { REQUEST } from '@nestjs/core';
 import { TProcessedMedia } from '../interface/files.interface';
 import { MediaProcessUtil } from '../util/media_process.util';
+import { CustomInternalServerErrorException } from '../exception/custom-exception';
 
 @Injectable({
   scope: Scope.REQUEST,
@@ -17,7 +18,7 @@ export class FileProcessPipe implements PipeTransform {
       const mediaType = customParams.relativePath;
       return file.mimetype.includes('image') ? await MediaProcessUtil.processImage(file, mediaType) : await MediaProcessUtil.originalVideo(file);
     } catch (error) {
-      throw new InternalServerErrorException(error.message || error);
+      throw new CustomInternalServerErrorException(error.message || error);
     }
   }
 }
@@ -37,7 +38,7 @@ export class FilesProcessPipe implements PipeTransform {
         })
       )
     } catch (error) {
-      throw new InternalServerErrorException(error.message || error);
+      throw new CustomInternalServerErrorException(error.message || error);
     }
   }
 }

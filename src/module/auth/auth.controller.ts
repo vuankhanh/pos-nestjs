@@ -1,4 +1,4 @@
-import { Body, ConflictException, Controller, HttpCode, HttpStatus, Logger, Post, UnauthorizedException, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Logger, Post, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SignUpDto } from './dto/signup.dto';
 import { AuthService } from './auth.service';
 import { SignInDto } from './dto/signin.dto';
@@ -6,6 +6,7 @@ import { Account } from './schemas/account.schema';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { AccountService } from 'src/shared/service/account.service';
+import { CustomConflictException, CustomUnauthorizedException } from 'src/shared/exception/custom-exception';
 
 @Controller('auth')
 @UsePipes(ValidationPipe)
@@ -24,7 +25,7 @@ export class AuthController {
       const query = { username: signUpDto.username };
       const isExist = await this.accountService.findOne(query);
       if (isExist) {
-        throw new ConflictException('Tên đăng nhập đã tồn tại');
+        throw new CustomConflictException('Tên đăng nhập đã tồn tại');
       }
 
       const signUp = new Account(
@@ -54,7 +55,7 @@ export class AuthController {
       const { username, password } = signInDto;
       const account = await this.accountService.validateAccount(username, password);
       if (!account) {
-        throw new UnauthorizedException('Sai tên đăng nhập hoặc mật khẩu');
+        throw new CustomUnauthorizedException('Sai tên đăng nhập hoặc mật khẩu');
       }
 
       const accessToken = this.authService.createAccessToken(account);

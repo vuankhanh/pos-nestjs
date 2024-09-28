@@ -1,5 +1,6 @@
-import { ArgumentMetadata, BadRequestException, Injectable, PipeTransform } from '@nestjs/common';
+import { ArgumentMetadata, Injectable, PipeTransform } from '@nestjs/common';
 import { ObjectId } from 'mongodb';
+import { CustomBadRequestException } from '../exception/custom-exception';
 
 @Injectable()
 export class ParseObjectIdPipe implements PipeTransform {
@@ -8,7 +9,7 @@ export class ParseObjectIdPipe implements PipeTransform {
       return value;
     }
     if (!ObjectId.isValid(value)) {
-      throw new BadRequestException(`${value} is not a valid MongoDB ID`);
+      throw new CustomBadRequestException(`${value} không đúng là MongoDB ID`);
     }
     return ObjectId.createFromHexString(value); 
   }
