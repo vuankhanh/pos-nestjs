@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module, RequestMethod } from '@nestjs/common';
 import { ProductModule } from './module/product/product.module';
 import { CustomerModule } from './module/customer/customer.module';
 import { OrderModule } from './module/order/order.module';
@@ -11,6 +11,10 @@ import { AlbumModule } from './module/album/album.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './module/auth/auth.module';
 import { join } from "path";
+import { LoggerMiddleware } from './shared/middleware/logger.middleware';
+import { CustomLoggerModule } from './module/custom_logger/custom_logger.module';
+import { APP_FILTER } from '@nestjs/core';
+import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
 
 @Module({
   imports: [
@@ -28,10 +32,16 @@ import { join } from "path";
     CustomerModule,
     OrderModule,
     PaymentModule,
-    AuthModule
+    AuthModule,
+    CustomLoggerModule
   ],
   controllers: [],
-  providers: [],
+  providers: [
+    {
+      provide: APP_FILTER,
+      useClass: HttpExceptionFilter,
+    },
+  ],
 })
 export class AppModule {
   static port: number;
@@ -39,5 +49,11 @@ export class AppModule {
     private configService: ConfigService
   ) {
     AppModule.port = this.configService.get<number>('app.port');
+  }
+
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(LoggerMiddleware)
+      .forRoutes({ path: '*', method: RequestMethod.ALL });
   }
 }
