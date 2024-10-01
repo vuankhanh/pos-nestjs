@@ -3,10 +3,10 @@ import {
   NestInterceptor,
   ExecutionContext,
   CallHandler,
-  BadRequestException,
 } from '@nestjs/common';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { CustomBadRequestException } from '../exception/custom-exception';
 
 export interface Response<T> {
   statusCode: number;
@@ -24,7 +24,7 @@ export class FormatResponseInterceptor<T>
     return next.handle().pipe(
       map((data) => {
         if (!data) {
-          throw new BadRequestException('Không có dữ liệu');
+          throw new CustomBadRequestException('Không có dữ liệu');
         }
         return {
           statusCode: context.switchToHttp().getResponse().statusCode,

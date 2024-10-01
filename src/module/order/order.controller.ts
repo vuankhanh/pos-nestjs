@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
@@ -10,6 +10,7 @@ import { ConfigService } from '@nestjs/config';
 import { OrderStatus } from 'src/constant/status.constant';
 import { OrderUtil } from 'src/shared/util/order.util';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
+import { CustomBadRequestException } from 'src/shared/exception/custom-exception';
 
 @Controller('order')
 @UseGuards(AuthGuard)
@@ -125,7 +126,7 @@ export class OrderController {
   ) {
     const orderDetail = await this.orderService.getDetail({ _id: id });
     if (![OrderStatus.CONFIRMED, OrderStatus.SHIPPING, OrderStatus.COMPLETED].includes(orderDetail.status as OrderStatus)) {
-      throw new BadRequestException('Order status must be CONFIRMED, SHIPPING, or COMPLETED to print');
+      throw new CustomBadRequestException('Trạng thái của Order phải là CONFIRMED, SHIPPING, hoặc COMPLETED để in');
     }
     const order: Order = new Order(orderDetail);
 

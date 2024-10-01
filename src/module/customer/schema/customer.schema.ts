@@ -2,6 +2,7 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { CustomerLevel } from "src/constant/customer.constant";
 import { ICustomer, ICustomerLevel } from "src/shared/interface/customer.interface";
+import { PhoneUtil } from "src/shared/util/phone.util";
 
 export type CustomerDocument = HydratedDocument<Customer>;
 
@@ -55,7 +56,7 @@ export class Customer implements ICustomer {
   
   constructor(customer: ICustomer) {
     this.name = customer.name;
-    this.phoneNumber = customer.phoneNumber;
+    this.phoneNumber = PhoneUtil.formatPhoneNumber(customer.phoneNumber);
     this.address = customer.address;
     this.email = customer.email;
     this.dob = customer.dob;

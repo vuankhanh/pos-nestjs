@@ -1,9 +1,9 @@
 import { MulterOptions } from "@nestjs/platform-express/multer/interfaces/multer-options.interface";
 import * as multer from 'multer';
 
-import { BadRequestException } from "@nestjs/common";
 import { IFileType } from "src/shared/interface/files.interface";
 import { Request } from "express";
+import { CustomBadRequestException } from "src/shared/exception/custom-exception";
 
 const fileFilter = (req: Request, file: Express.Multer.File, cb) => {
   const urlCustomerUpload = '/customer/upload-csv';
@@ -12,7 +12,7 @@ const fileFilter = (req: Request, file: Express.Multer.File, cb) => {
 
   const match = req.url.includes(urlCustomerUpload) ? matchContactFile : matchMediaFile
   if (match.indexOf(file.mimetype) === -1) {
-    return cb(new BadRequestException('Invalid file type'), false);
+    return cb(new CustomBadRequestException('Kiểu tệp không hợp lệ'), false);
   }
   return cb(null, true);
 }

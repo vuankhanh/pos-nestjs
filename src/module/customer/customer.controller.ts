@@ -8,6 +8,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorageMulterOptions } from 'src/constant/file.constanst';
 import { CsvUtil } from 'src/shared/util/csv.util';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
+import { PhoneNumberInputPipe } from 'src/shared/pipes/string.pipe';
 
 //1. Guards: Được sử dụng để bảo vệ các route.
 //2.Interceptors: Được sử dụng để thay đổi hoặc mở rộng hành vi của các method.
@@ -23,7 +24,7 @@ export class CustomerController {
 
   @Get()
   async getAll(
-    @Query('name') nameOrPhoneNumber: string,
+    @Query('name', new PhoneNumberInputPipe()) nameOrPhoneNumber: string,
     @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number,
     @Query('size', new DefaultValuePipe(10), ParseIntPipe) size: number
   ) {

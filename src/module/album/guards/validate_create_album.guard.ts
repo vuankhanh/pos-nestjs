@@ -1,7 +1,8 @@
-import { CanActivate, ConflictException, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { AlbumService } from '../album.service';
 import { ConfigService } from '@nestjs/config';
 import { VietnameseAccentUtil } from 'src/shared/util/vietnamese-accent.util';
+import { CustomConflictException } from 'src/shared/exception/custom-exception';
 
 @Injectable()
 export class ValidateCreateAlbumGuard implements CanActivate {
@@ -33,7 +34,7 @@ export class ValidateCreateAlbumGuard implements CanActivate {
 
     const isExists = await this.albumService.checkExistAlbum({ route });
     if (isExists) {
-      throw new ConflictException('Album already exists');
+      throw new CustomConflictException('Album đã tồn tại');
     };
 
     query['route'] = route;
