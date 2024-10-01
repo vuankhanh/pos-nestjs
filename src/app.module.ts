@@ -20,7 +20,6 @@ import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
   imports: [
     ConfigModule.forRoot({
       load: [configuration],
-      envFilePath: join(__dirname, '..', '.env'), //Phải định nghĩa mặc định ở đây vì khi chạy pm2 thì location (the project root directory) sẽ khác
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
