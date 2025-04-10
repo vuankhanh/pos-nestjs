@@ -10,11 +10,13 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AlbumModule } from './module/album/album.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './module/auth/auth.module';
-import { join } from "path";
+
 import { LoggerMiddleware } from './shared/middleware/logger.middleware';
 import { CustomLoggerModule } from './module/custom_logger/custom_logger.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
+import { SupplierModule } from './module/supplier/supplier.module';
+import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.module';
 
 @Module({
   imports: [
@@ -32,7 +34,9 @@ import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
     OrderModule,
     PaymentModule,
     AuthModule,
-    CustomLoggerModule
+    CustomLoggerModule,
+    SupplierModule,
+    VnPublicApisModule
   ],
   controllers: [],
   providers: [

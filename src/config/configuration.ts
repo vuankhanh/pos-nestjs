@@ -37,7 +37,13 @@ export default () => {
     album: join(__dirname, '../..', process.env.ALBUM_FOLDER).replace(/\\/g, "/")
   }
 
+  const vnPublicApi = {
+    protocol: process.env.VN_PUBLIC_API_PROTOCOL || 'https',
+    host: process.env.VN_PUBLIC_API_HOST || 'vn-public-apis.fpo.vn',
+    port: Number(process.env.VN_PUBLIC_API_PORT) || 443,
+  }
+
   const config = process.env.NODE_ENV?.trim() === 'pro' ? pro : dev;
 
-  return { ...config, folder };
+  return { ...config, folder, vnPublicApi };
 }

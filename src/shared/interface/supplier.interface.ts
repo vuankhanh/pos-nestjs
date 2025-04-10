@@ -1,0 +1,27 @@
+import { IDistrict, IProvince } from "./vn-public-apis.interface";
+
+export interface ISupplier {
+  name: string; // Name of the supplier
+  address: {
+    province: IProvince;
+    district: IDistrict;
+    ward: string;
+    street: string;
+  };
+  telephone: string; // Contact phone number
+  email?: string; // Contact email
+  position?: {
+    lat: number; // Latitude for geolocation
+    lng: number; // Longitude for geolocation
+  },
+  url?: string; // Website URL (optional)
+  taxID?: string; // Tax identification number (optional)
+  contactPoint?: {
+    contactType: string; // Type of contact (e.g., Customer Support)
+    name: string; // Name of the contact person
+    telephone: string; // Contact phone number
+    email: string; // Contact email
+  };
+  logo?: string; // URL to the supplier's logo (optional)
+  sameAs?: string[]; // URLs to social media or related profiles (optional)
+}
