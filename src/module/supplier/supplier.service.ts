@@ -5,6 +5,7 @@ import { Document, Types, FilterQuery, FlattenMaps } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { CustomConflictException } from 'src/shared/exception/custom-exception';
 
 @Injectable()
 export class SupplierService implements IBasicService<Supplier> {
@@ -12,10 +13,17 @@ export class SupplierService implements IBasicService<Supplier> {
     @InjectModel(Supplier.name) private supplierModel: Model<Supplier>
   ) { }
 
-  async create(data: Supplier): Promise<SupplierDocument> {
-    const supplier = new this.supplierModel(data);
-    await supplier.save();
-    return supplier;
+  async create(supplierData: Supplier): Promise<SupplierDocument> {
+    try {
+      const supplier = new this.supplierModel(supplierData);
+      return await supplier.save();
+    } catch (error) {
+      if (error.code === 11000) {
+        // Lỗi trùng lặp (duplicate key)
+        throw new CustomConflictException('Supplier name đã tồn tại');
+      }
+      throw error;
+    }
   }
 
   async getAll(filterQuery:FilterQuery<Supplier>, page: number, size: number): Promise<{ data: SupplierDocument[]; paging: IPaging; }> {

@@ -1,18 +1,18 @@
-import { IDistrict, IProvince } from "./vn-public-apis.interface";
+import { IDistrict, IProvince, IWard } from "./vn-public-apis.interface";
 
 export interface ISupplier {
   name: string; // Name of the supplier
   address: {
     province: IProvince;
     district: IDistrict;
-    ward: string;
+    ward: IWard;
     street: string;
   };
   telephone: string; // Contact phone number
   email?: string; // Contact email
   position?: {
-    lat: number; // Latitude for geolocation
-    lng: number; // Longitude for geolocation
+    lat: string | number; // Latitude for geolocation
+    lng: string | number; // Longitude for geolocation
   },
   url?: string; // Website URL (optional)
   taxID?: string; // Tax identification number (optional)

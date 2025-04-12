@@ -1,7 +1,9 @@
 import { PartialType } from "@nestjs/mapped-types";
-import { IsEmail, IsNotEmpty, IsOptional, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsEmail, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
+import { AddressDto } from "src/shared/dto/address.dto";
+import { CoordinatesDto } from "src/shared/dto/coordinates.dto";
 import { ISupplier } from "src/shared/interface/supplier.interface";
-import { IProvince, IDistrict } from "src/shared/interface/vn-public-apis.interface";
 
 export class SupplierDto implements ISupplier {
   @IsNotEmpty({ message: 'The supplier name is required' })
@@ -9,12 +11,9 @@ export class SupplierDto implements ISupplier {
   name: string;
 
   @IsNotEmpty({ message: 'The address is required' })
-  address: {
-    province: IProvince; // Province object
-    district: IDistrict; // District object
-    ward: string; // Ward name
-    street: string; // Street address
-  };
+  @ValidateNested() // Validate các thuộc tính bên trong address
+  @Type(() => AddressDto) // Chỉ định class để validate
+  address: AddressDto;
 
   @IsNotEmpty({ message: 'The telephone is required' })
   @IsString({ message: 'The telephone must be a string' })
@@ -25,24 +24,9 @@ export class SupplierDto implements ISupplier {
   email?: string;
 
   @IsOptional()
-  position?: { lat: number; lng: number; };
-
-  @IsOptional()
-  @IsString({ message: 'The url must be a string' })
-  url?: string;
-
-  @IsOptional()
-  @IsString({ message: 'The taxID must be a string' })
-  taxID?: string;
-
-  @IsOptional()
-  contactPoint?: { contactType: string; name: string; telephone: string; email: string; };
-
-  @IsOptional()
-  logo?: string;
-
-  @IsOptional()
-  sameAs?: string[];
+  @ValidateNested() // Validate các thuộc tính bên trong address
+  @Type(() => CoordinatesDto) // Chỉ định class để validate
+  position?: CoordinatesDto;
 }
 
 export class UpdateSupplierDto extends PartialType(SupplierDto) { }
