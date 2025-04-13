@@ -3,7 +3,6 @@ import { HydratedDocument } from "mongoose";
 import { IAddress } from "src/shared/interface/address.interface";
 import { ICoordinates } from "src/shared/interface/coordinates.interface";
 import { ISupplier } from "src/shared/interface/supplier.interface";
-import { IProvince, IDistrict, IWard } from "src/shared/interface/vn-public-apis.interface";
 
 export type SupplierDocument = HydratedDocument<Supplier>;
 

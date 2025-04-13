@@ -1,8 +1,9 @@
 import { Controller, Get, Query, UseInterceptors, } from '@nestjs/common';
 import { CustomBadRequestException } from 'src/shared/exception/custom-exception';
-import { CustomLoggerService } from '../custom_logger/custom_logger.service';
+
 import { VnPublicApisService } from './vn-public-apis.service';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
+import { CustomLoggerService } from 'src/module/custom_logger/custom_logger.service';
 
 @Controller('vn-public-apis')
 @UseInterceptors(

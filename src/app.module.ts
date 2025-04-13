@@ -15,7 +15,7 @@ import { LoggerMiddleware } from './shared/middleware/logger.middleware';
 import { CustomLoggerModule } from './module/custom_logger/custom_logger.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
-import { SupplierModule } from './module/supplier/supplier.module';
+import { SupplierModule } from './module/supplier/main/supplier.module';
 import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.module';
 
 @Module({
@@ -38,7 +38,6 @@ import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.modul
     SupplierModule,
     VnPublicApisModule
   ],
-  controllers: [],
   providers: [
     {
       provide: APP_FILTER,
