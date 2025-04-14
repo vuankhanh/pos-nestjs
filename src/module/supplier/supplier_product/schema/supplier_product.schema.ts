@@ -5,6 +5,7 @@ import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import { SupplierProductUnit } from "src/constant/product.constant";
 import { Supplier } from "../../main/schema/supplier.schema";
+import { SupplierProductDto } from "../dto/supplier_product.dto";
 
 export type SupplierProductDocument = HydratedDocument<Supplier_Product>;
 
@@ -29,7 +30,7 @@ export class Supplier_Product implements ISupplierProduct {
   supplierId: Types.ObjectId | string;
 
   constructor(
-    supplierProduct: ISupplierProduct,
+    supplierProduct: SupplierProductDto,
   ) {
     this.name = supplierProduct.name;
     this.code = this.generateSupplierProductCode();

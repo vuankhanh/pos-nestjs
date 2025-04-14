@@ -22,31 +22,31 @@ export class SupplierService implements IBasicService<Supplier> {
         // Lỗi trùng lặp (duplicate key)
         throw new CustomConflictException('Supplier name đã tồn tại');
       }
-      throw error;
+      return error;
     }
   }
 
-  async getAll(filterQuery:FilterQuery<Supplier>, page: number, size: number): Promise<{ data: SupplierDocument[]; paging: IPaging; }> {
+  async getAll(filterQuery: FilterQuery<Supplier>, page: number, size: number): Promise<{ data: SupplierDocument[]; paging: IPaging; }> {
     const countTotal = await this.supplierModel.countDocuments(filterQuery);
-        const productAggregate = await this.supplierModel.aggregate(
-          [
-            { $match: filterQuery },
-            { $skip: size * (page - 1) },
-            { $limit: size },
-          ]
-        );
-    
-        const metaData = {
-          data: productAggregate,
-          paging: {
-            totalItems: countTotal,
-            size: size,
-            page: page,
-            totalPages: Math.ceil(countTotal / size),
-          }
-        };
-        
-        return metaData;
+    const supplierAggregate = await this.supplierModel.aggregate(
+      [
+        { $match: filterQuery },
+        { $skip: size * (page - 1) },
+        { $limit: size },
+      ]
+    );
+
+    const metaData = {
+      data: supplierAggregate,
+      paging: {
+        totalItems: countTotal,
+        size: size,
+        page: page,
+        totalPages: Math.ceil(countTotal / size),
+      }
+    };
+
+    return metaData;
   }
 
   async getDetail(filterQuery: FilterQuery<Supplier>): Promise<SupplierDocument> {
@@ -60,9 +60,9 @@ export class SupplierService implements IBasicService<Supplier> {
   async modify(filterQuery: FilterQuery<Supplier>, data: Partial<Supplier>): Promise<SupplierDocument> {
     return await this.supplierModel.findOneAndUpdate(filterQuery, data, { new: true });
   }
-  
+
   async remove(filterQuery: FilterQuery<Supplier>): Promise<SupplierDocument> {
     return await this.supplierModel.findOneAndDelete(filterQuery);
   }
-  
+
 }

@@ -23,7 +23,7 @@ export class SupplierProductDto implements ISupplierProduct {
   description?: string;
 
   @IsMongoId({ message: 'The supplier ID must be a valid ObjectId' })
-  supplierId: string | Types.ObjectId;
+  supplierId: string;
 }
 
 export class UpdateSupplierProductDto extends PartialType(SupplierProductDto) { }

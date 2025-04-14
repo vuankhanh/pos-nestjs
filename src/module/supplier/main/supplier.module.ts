@@ -5,7 +5,7 @@ import { VnPublicApisModule } from '../../vn-public-apis/vn-public-apis.module';
 import { CustomLoggerModule } from '../../custom_logger/custom_logger.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Supplier, supplierSchema } from './schema/supplier.schema';
-import { ProductModule } from '../supplier_product/supplier_product.module';
+import { SupplierProductModule } from '../supplier_product/supplier_product.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { ProductModule } from '../supplier_product/supplier_product.module';
     ]),
     CustomLoggerModule,
     VnPublicApisModule,
-    ProductModule
+    SupplierProductModule
   ],
   controllers: [SupplierController],
   providers: [SupplierService]
