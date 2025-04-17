@@ -1,10 +1,13 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SupplierProductService } from './supplier_product.service';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 import { SupplierProductDto } from './dto/supplier_product.dto';
 import { Supplier_Product } from './schema/supplier_product.schema';
+import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 
 @Controller('supplier_product')
+@UseInterceptors(FormatResponseInterceptor)
+@UsePipes(ValidationPipe)
 export class SupplierProductController {
   constructor(
     private readonly supplierProductService: SupplierProductService

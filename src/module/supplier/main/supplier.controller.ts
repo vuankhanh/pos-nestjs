@@ -5,6 +5,7 @@ import { FormatResponseInterceptor } from 'src/shared/interceptors/format_respon
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 
 @Controller('supplier')
+@UseInterceptors(FormatResponseInterceptor)
 @UsePipes(ValidationPipe)
 export class SupplierController {
   constructor(
