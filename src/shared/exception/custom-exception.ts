@@ -18,8 +18,8 @@ import {
 } from "@nestjs/common";
 
 export class CustomBadRequestException extends BadRequestException {
-  constructor(message: string) {
-    super(message, 'Yêu cầu không hợp lệ');
+  constructor(message?: string) {
+    super(message || 'Yêu cầu không hợp lệ');
   }
 }
 
