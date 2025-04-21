@@ -1,6 +1,6 @@
 import { IDistrict, IProvince, IWard } from "./vn-public-apis.interface";
 
-export interface ISupplier {
+export interface ISupplierLocation {
   name: string; // Name of the supplier
   address: {
     province: IProvince;

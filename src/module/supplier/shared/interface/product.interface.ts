@@ -6,5 +6,5 @@ export interface ISupplierProduct {
   price: number;
   unit: `${SupplierProductUnit}`;
   description?: string;
-  supplierId: Types.ObjectId | string;
+  supplierLocationId: Types.ObjectId | string;
 }

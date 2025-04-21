@@ -3,9 +3,9 @@ import { Type } from "class-transformer";
 import { IsEmail, IsNotEmpty, IsOptional, IsString, ValidateNested } from "class-validator";
 import { AddressDto } from "src/shared/dto/address.dto";
 import { CoordinatesDto } from "src/shared/dto/coordinates.dto";
-import { ISupplier } from "src/shared/interface/supplier.interface";
+import { ISupplierLocation } from "src/shared/interface/supplier_location.interface";
 
-export class SupplierDto implements ISupplier {
+export class SupplierLocationDto implements ISupplierLocation {
   @IsNotEmpty({ message: 'The supplier name is required' })
   @IsString({ message: 'The supplier name must be a string' })
   name: string;
@@ -29,4 +29,4 @@ export class SupplierDto implements ISupplier {
   position?: CoordinatesDto;
 }
 
-export class UpdateSupplierDto extends PartialType(SupplierDto) { }
+export class UpdateSupplierLocationDto extends PartialType(SupplierLocationDto) { }

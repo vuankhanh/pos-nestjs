@@ -2,12 +2,12 @@ import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { HydratedDocument } from "mongoose";
 import { IAddress } from "src/shared/interface/address.interface";
 import { ICoordinates } from "src/shared/interface/coordinates.interface";
-import { ISupplier } from "src/shared/interface/supplier.interface";
+import { ISupplierLocation } from "src/shared/interface/supplier_location.interface";
 
-export type SupplierDocument = HydratedDocument<Supplier>;
+export type SupplierLocationDocument = HydratedDocument<Supplier_Location>;
 
 @Schema({ timestamps: true })
-export class Supplier implements ISupplier {
+export class Supplier_Location implements ISupplierLocation {
   @Prop({ type: String, required: true, unique: true })
   name: string;
 
@@ -28,4 +28,4 @@ export class Supplier implements ISupplier {
   position?: ICoordinates;
 }
 
-export const supplierSchema = SchemaFactory.createForClass(Supplier);
+export const supplierLocationSchema = SchemaFactory.createForClass(Supplier_Location);

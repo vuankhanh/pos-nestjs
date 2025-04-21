@@ -15,7 +15,7 @@ import { LoggerMiddleware } from './shared/middleware/logger.middleware';
 import { CustomLoggerModule } from './module/custom_logger/custom_logger.module';
 import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
-import { SupplierModule } from './module/supplier/main/supplier.module';
+import { SupplierProductModule } from './module/supplier/supplier_product/supplier_product.module';
 import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.module';
 
 @Module({
@@ -35,7 +35,7 @@ import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.modul
     PaymentModule,
     AuthModule,
     CustomLoggerModule,
-    SupplierModule,
+    SupplierProductModule,
     VnPublicApisModule
   ],
   providers: [

@@ -3,6 +3,7 @@ import { SupplierProductService } from './supplier_product.service';
 import { SupplierProductController } from './supplier_product.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Supplier_Product, supplierProductSchema } from './schema/supplier_product.schema';
+import { SupplierLocationModule } from '../supplier_location/supplier_location.module';
 
 @Module({
   imports: [
@@ -13,10 +14,9 @@ import { Supplier_Product, supplierProductSchema } from './schema/supplier_produ
         collection: Supplier_Product.name.toLowerCase()
       }
     ]),
+    SupplierLocationModule
   ],
-  controllers: [
-    SupplierProductController
-  ],
+  controllers: [SupplierProductController],
   providers: [SupplierProductService]
 })
 export class SupplierProductModule { }

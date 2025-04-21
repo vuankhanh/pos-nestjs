@@ -1,16 +1,20 @@
 import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SupplierProductService } from './supplier_product.service';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
-import { SupplierProductDto } from './dto/supplier_product.dto';
+import { SupplierProductDto, UpdateSupplierProductDto } from './dto/supplier_product.dto';
 import { Supplier_Product } from './schema/supplier_product.schema';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
+import { SupplierLocationService } from '../supplier_location/supplier_location.service';
+import { CustomBadRequestException } from 'src/shared/exception/custom-exception';
+import { ObjectId } from 'mongodb';
 
 @Controller('supplier_product')
 @UseInterceptors(FormatResponseInterceptor)
 @UsePipes(ValidationPipe)
 export class SupplierProductController {
   constructor(
-    private readonly supplierProductService: SupplierProductService
+    private readonly supplierProductService: SupplierProductService,
+    private readonly supplierLocationService: SupplierLocationService
   ) {}
 
   @Get()
@@ -40,7 +44,14 @@ export class SupplierProductController {
     ) {
       console.log(supplierProductDto);
       const supplierProduct = new Supplier_Product(supplierProductDto);
-      supplierProduct.updateSupplierId = supplierProductDto.supplierId; // Set the supplierId to the given id
+      supplierProduct.updateSupplierLocationId = supplierProductDto.supplierLocationId; // Set the supplierLocationId to the given id
+      const supplierLocation = await this.supplierLocationService.getDetail({ _id: supplierProductDto.supplierLocationId });
+      if (!supplierLocation) {
+        throw new CustomBadRequestException('Supplier location không tồn tại');
+      }
+      
+      supplierProduct.supplierLocationName = supplierLocation.name || '';
+
       return await this.supplierProductService.create(supplierProduct);
     }
   
@@ -51,19 +62,41 @@ export class SupplierProductController {
     ) {
       const filterQuery = { _id: id };
       const supplierProduct = new Supplier_Product(supplierProductDto);
-      supplierProduct.updateSupplierId = id; // Set the supplierId to the given id
+      supplierProduct.updateSupplierLocationId = id; // Set the supplierLocationId to the given id
+      const supplierLocation = await this.supplierLocationService.getDetail({ _id: supplierProductDto.supplierLocationId });
+      if (!supplierLocation) {
+        throw new CustomBadRequestException('Supplier location không tồn tại');
+      }
+      
+      supplierProduct.supplierLocationName = supplierLocation.name || '';
       return await this.supplierProductService.replace(filterQuery, supplierProduct);
     }
   
-    // @Patch(':id')
-    // async modify(
-    //   @Param('id', new ParseObjectIdPipe()) id: string,
-    //   @Body() productDto: UpdateSupplierDto
-    // ) {
-    //   const filterQuery = { _id: id };
+    @Patch(':id')
+    async modify(
+      @Param('id', new ParseObjectIdPipe()) id: string,
+      @Body() supplierProductDto: UpdateSupplierProductDto
+    ) {
+      const filterQuery = { _id: id };
+
+      const data: Partial<Supplier_Product>= {...supplierProductDto};
+
+      const supplierLocationId = supplierProductDto.supplierLocationId;
+      console.log(`supplierLocationId: `, supplierLocationId);
       
-    //   return await this.supplierProductService.modify(filterQuery, productDto);
-    // }
+      if (supplierLocationId) {
+        data.supplierLocationId = ObjectId.createFromHexString(supplierLocationId);
+        const supplierLocation = await this.supplierLocationService.getDetail({ _id: supplierLocationId });
+        if (!supplierLocation) {
+          throw new CustomBadRequestException('Supplier location không tồn tại');
+        }
+        
+        data.supplierLocationName = supplierLocation.name || '';
+
+      }
+
+      return await this.supplierProductService.modify(filterQuery, data);
+    }
   
     @Delete(':id')
     async delete(

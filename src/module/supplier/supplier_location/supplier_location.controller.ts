@@ -1,15 +1,15 @@
 import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { SupplierService } from './supplier.service';
-import { SupplierDto, UpdateSupplierDto } from './dto/supplier.dto';
+import { SupplierLocationService } from './supplier_location.service';
+import { SupplierLocationDto, UpdateSupplierLocationDto } from './dto/supplier_location.dto';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 
 @Controller('supplier')
 @UseInterceptors(FormatResponseInterceptor)
 @UsePipes(ValidationPipe)
-export class SupplierController {
+export class SupplierLocationController {
   constructor(
-    private readonly supplierService: SupplierService
+    private readonly supplierLocationService: SupplierLocationService
   ) { }
 
   @Get()
@@ -21,7 +21,7 @@ export class SupplierController {
     const filterQuery = {};
     if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
 
-    return await this.supplierService.getAll(filterQuery, page, size);
+    return await this.supplierLocationService.getAll(filterQuery, page, size);
   }
 
   @Get(':id')
@@ -30,36 +30,34 @@ export class SupplierController {
   ) {
     const filterQuery = { _id: id };
 
-    return await this.supplierService.getDetail(filterQuery);
+    return await this.supplierLocationService.getDetail(filterQuery);
   }
 
   @Post()
   async create(
-    @Body() supplierDto: SupplierDto
+    @Body() supplierLocationDto: SupplierLocationDto
   ) {
-    console.log(supplierDto);
-
-    return await this.supplierService.create(supplierDto);
+    return await this.supplierLocationService.create(supplierLocationDto);
   }
 
   @Put(':id')
   async replace(
     @Param('id', new ParseObjectIdPipe()) id: string,
-    @Body() productDto: SupplierDto
+    @Body() supplierLocationDto: SupplierLocationDto
   ) {
     const filterQuery = { _id: id };
 
-    return await this.supplierService.replace(filterQuery, productDto);
+    return await this.supplierLocationService.replace(filterQuery, supplierLocationDto);
   }
 
   @Patch(':id')
   async modify(
     @Param('id', new ParseObjectIdPipe()) id: string,
-    @Body() productDto: UpdateSupplierDto
+    @Body() supplierLocationDto: UpdateSupplierLocationDto
   ) {
     const filterQuery = { _id: id };
     
-    return await this.supplierService.modify(filterQuery, productDto);
+    return await this.supplierLocationService.modify(filterQuery, supplierLocationDto);
   }
 
   @Delete(':id')
@@ -67,6 +65,6 @@ export class SupplierController {
     @Param('id', new ParseObjectIdPipe()) id: string
   ) {
     const filterQuery = { _id: id };
-    return await this.supplierService.remove(filterQuery);
+    return await this.supplierLocationService.remove(filterQuery);
   }
 }

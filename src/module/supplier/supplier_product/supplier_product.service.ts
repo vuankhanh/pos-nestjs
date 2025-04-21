@@ -15,13 +15,14 @@ export class SupplierProductService implements IBasicService<Supplier_Product> {
   async create(data: Supplier_Product): Promise<SupplierProductDocument> {
     try {
       const supplierProduct = new this.supplierProductModel(data);
+
       return await supplierProduct.save();
     } catch (error) {
       if (error.code === 11000) {
         // Lỗi trùng lặp (duplicate key)
         throw new CustomConflictException('Supplier product name đã tồn tại');
       }
-      return error;
+      throw new Error(error);
     }
   }
 

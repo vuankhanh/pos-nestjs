@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { IBasicService } from 'src/shared/interface/basic_service.interface';
-import { Supplier, SupplierDocument } from './schema/supplier.schema';
+import { Supplier_Location, SupplierLocationDocument } from './schema/supplier_location.schema';
 import { Document, Types, FilterQuery, FlattenMaps } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { InjectModel } from '@nestjs/mongoose';
@@ -8,12 +8,12 @@ import { Model } from 'mongoose';
 import { CustomConflictException } from 'src/shared/exception/custom-exception';
 
 @Injectable()
-export class SupplierService implements IBasicService<Supplier> {
+export class SupplierLocationService implements IBasicService<Supplier_Location> {
   constructor(
-    @InjectModel(Supplier.name) private supplierModel: Model<Supplier>
+    @InjectModel(Supplier_Location.name) private supplierModel: Model<Supplier_Location>
   ) { }
 
-  async create(supplierData: Supplier): Promise<SupplierDocument> {
+  async create(supplierData: Supplier_Location): Promise<SupplierLocationDocument> {
     try {
       const supplier = new this.supplierModel(supplierData);
       return await supplier.save();
@@ -26,7 +26,7 @@ export class SupplierService implements IBasicService<Supplier> {
     }
   }
 
-  async getAll(filterQuery: FilterQuery<Supplier>, page: number, size: number): Promise<{ data: SupplierDocument[]; paging: IPaging; }> {
+  async getAll(filterQuery: FilterQuery<Supplier_Location>, page: number, size: number): Promise<{ data: SupplierLocationDocument[]; paging: IPaging; }> {
     const countTotal = await this.supplierModel.countDocuments(filterQuery);
     const supplierAggregate = await this.supplierModel.aggregate(
       [
@@ -49,19 +49,19 @@ export class SupplierService implements IBasicService<Supplier> {
     return metaData;
   }
 
-  async getDetail(filterQuery: FilterQuery<Supplier>): Promise<SupplierDocument> {
+  async getDetail(filterQuery: FilterQuery<Supplier_Location>): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOne(filterQuery);
   }
 
-  async replace(filterQuery: FilterQuery<Supplier>, data: Supplier): Promise<SupplierDocument> {
+  async replace(filterQuery: FilterQuery<Supplier_Location>, data: Supplier_Location): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOneAndReplace(filterQuery, data);
   }
 
-  async modify(filterQuery: FilterQuery<Supplier>, data: Partial<Supplier>): Promise<SupplierDocument> {
+  async modify(filterQuery: FilterQuery<Supplier_Location>, data: Partial<Supplier_Location>): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOneAndUpdate(filterQuery, data, { new: true });
   }
 
-  async remove(filterQuery: FilterQuery<Supplier>): Promise<SupplierDocument> {
+  async remove(filterQuery: FilterQuery<Supplier_Location>): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOneAndDelete(filterQuery);
   }
 

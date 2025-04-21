@@ -1,11 +1,11 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
-import { ISupplierProduct } from "../../shared/product.interface";
+import { ISupplierProduct } from "../../shared/interface/product.interface";
 import { HydratedDocument, Types } from "mongoose";
 import { ObjectId } from 'mongodb';
 import { v4 as uuidv4 } from 'uuid';
 import { SupplierProductUnit } from "src/constant/product.constant";
-import { Supplier } from "../../main/schema/supplier.schema";
 import { SupplierProductDto } from "../dto/supplier_product.dto";
+import { Supplier_Location } from "../../supplier_location/schema/supplier_location.schema";
 
 export type SupplierProductDocument = HydratedDocument<Supplier_Product>;
 
@@ -26,8 +26,11 @@ export class Supplier_Product implements ISupplierProduct {
   @Prop({ type: String })
   description?: string;
 
-  @Prop({ type: Types.ObjectId, required: true, ref: Supplier.name })
-  supplierId: Types.ObjectId | string;
+  @Prop({ type: Types.ObjectId, required: true, ref: Supplier_Location.name })
+  supplierLocationId: Types.ObjectId | string;
+
+  @Prop({ type: String, required: true })
+  supplierLocationName: string;
 
   constructor(
     supplierProduct: SupplierProductDto,
@@ -47,8 +50,8 @@ export class Supplier_Product implements ISupplierProduct {
     return productCode;
   }
 
-  set updateSupplierId(supplierId: string) {
-    this.supplierId = ObjectId.createFromHexString(supplierId);
+  set updateSupplierLocationId(supplierLocationId: string) {
+    this.supplierLocationId = ObjectId.createFromHexString(supplierLocationId);
   }
 }
 
