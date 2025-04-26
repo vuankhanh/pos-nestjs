@@ -17,6 +17,7 @@ import { APP_FILTER } from '@nestjs/core';
 import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
 import { SupplierProductModule } from './module/supplier/supplier_product/supplier_product.module';
 import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.module';
+import { PurchaseOrderModule } from './module/purchase_order/purchase_order.module';
 
 @Module({
   imports: [
@@ -36,7 +37,8 @@ import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.modul
     AuthModule,
     CustomLoggerModule,
     SupplierProductModule,
-    VnPublicApisModule
+    VnPublicApisModule,
+    PurchaseOrderModule
   ],
   providers: [
     {
