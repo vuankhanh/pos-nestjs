@@ -1,5 +1,5 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
-import { PurchaseOrderDto } from './dto/purchase_order.dto';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { PurchaseOrderDto, UpdatePurchaseOrderDto } from './dto/purchase_order.dto';
 import { PurchaseOrderService } from './purchase_order.service';
 import { PurchaseOrderItem } from './schema/purchase_order_item.schema';
 import { Purchase_Order } from './schema/purchase_order.schema';
@@ -54,11 +54,36 @@ export class PurchaseOrderController {
     return await this.purchaseOrderService.create(purchaseOrder);
   }
 
+  @Patch(':id')
+  async modify(
+    @Param('id', new ParseObjectIdPipe()) id: string,
+    @Body() updatePurchaseOrderDto: UpdatePurchaseOrderDto
+  ) {
+    const filterQuery = { _id: id };
+
+    const data: Partial<Purchase_Order> = {};
+
+    if (updatePurchaseOrderDto.status) data.status = updatePurchaseOrderDto.status;
+    if(updatePurchaseOrderDto.purchaseOrderItems) {
+      const purchaseOrderItem: PurchaseOrderItem[] = updatePurchaseOrderDto.purchaseOrderItems.map(item => {
+        const purchaseOrderItem: PurchaseOrderItem = new PurchaseOrderItem(item);
+        return purchaseOrderItem;
+      });
+
+      data.purchaseOrderItems = purchaseOrderItem;
+    }
+
+    // this.purchaseOrderService.create(purchaseOrderDto);
+    // Logic to create a purchase order
+    return await this.purchaseOrderService.modify(filterQuery, data);
+  }
+
   @Put(':id')
   async replace(
     @Param('id', new ParseObjectIdPipe()) id: string,
     @Body() purchaseOrderDto: PurchaseOrderDto
   ) {
+    const filterQuery = { _id: id };
     const purchaseOrderItem = purchaseOrderDto.purchaseOrderItems.map(item => {
       const purchaseOrderItem: PurchaseOrderItem = new PurchaseOrderItem(item);
       return purchaseOrderItem;
@@ -71,7 +96,7 @@ export class PurchaseOrderController {
 
     // this.purchaseOrderService.create(purchaseOrderDto);
     // Logic to create a purchase order
-    return await this.purchaseOrderService.create(purchaseOrder);
+    return await this.purchaseOrderService.replace(filterQuery, purchaseOrder);
   }
 
   @Delete(':id')

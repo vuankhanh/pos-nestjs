@@ -1,3 +1,4 @@
+import { PartialType } from "@nestjs/mapped-types";
 import { IsEnum, IsNotEmpty } from "class-validator";
 import { SupplierProductUnit } from "src/constant/product.constant";
 import { PurchaseOrderStatus } from "src/constant/status.constant";
@@ -34,3 +35,5 @@ export class PurchaseOrderDto {
   @IsEnum(PurchaseOrderStatus, { message: 'The status is not valid' })
   status: PurchaseOrderStatus
 }
+
+export class UpdatePurchaseOrderDto extends PartialType(PurchaseOrderDto) {}
