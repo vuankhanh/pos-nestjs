@@ -9,6 +9,7 @@ export interface ISupplierLocation {
     street: string;
   };
   telephone: string; // Contact phone number
+  debt?: ISupplierDebt; // Optional field for supplier debt
   email?: string; // Contact email
   position?: {
     lat: string | number; // Latitude for geolocation
@@ -24,4 +25,9 @@ export interface ISupplierLocation {
   };
   logo?: string; // URL to the supplier's logo (optional)
   sameAs?: string[]; // URLs to social media or related profiles (optional)
+}
+
+export interface ISupplierDebt {
+  amount: number; // Amount owed to the supplier
+  note: string; // Additional notes (optional)
 }

@@ -1,14 +1,16 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { PurchaseOrderDto, UpdatePurchaseOrderDto } from './dto/purchase_order.dto';
 import { PurchaseOrderService } from './purchase_order.service';
 import { PurchaseOrderItem } from './schema/purchase_order_item.schema';
 import { Purchase_Order } from './schema/purchase_order.schema';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
 
 @Controller('purchase-order')
+@UseGuards(AuthGuard)
 @UsePipes(ValidationPipe)
-@UseInterceptors(FormatResponseInterceptor)
+@UseInterceptors(FormatResponseInterceptor, )
 export class PurchaseOrderController {
   constructor(
     private readonly purchaseOrderService: PurchaseOrderService

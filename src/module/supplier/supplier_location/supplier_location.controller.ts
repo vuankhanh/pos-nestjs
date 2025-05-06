@@ -1,10 +1,13 @@
-import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
+import { Body, Controller, DefaultValuePipe, Delete, Get, Param, ParseIntPipe, Patch, Post, Put, Query, UseGuards, UseInterceptors, UsePipes, ValidationPipe } from '@nestjs/common';
 import { SupplierLocationService } from './supplier_location.service';
 import { SupplierLocationDto, UpdateSupplierLocationDto } from './dto/supplier_location.dto';
 import { FormatResponseInterceptor } from 'src/shared/interceptors/format_response.interceptor';
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
+import { AuthGuard } from 'src/shared/guards/auth.guard';
+import { Supplier_Location } from './schema/supplier_location.schema';
 
 @Controller('supplier')
+@UseGuards(AuthGuard)
 @UseInterceptors(FormatResponseInterceptor)
 @UsePipes(ValidationPipe)
 export class SupplierLocationController {
@@ -20,7 +23,6 @@ export class SupplierLocationController {
   ) {
     const filterQuery = {};
     if (name) filterQuery['name'] = { $regex: name, $options: 'i' };
-
     return await this.supplierLocationService.getAll(filterQuery, page, size);
   }
 
@@ -29,7 +31,6 @@ export class SupplierLocationController {
     @Param('id', new ParseObjectIdPipe()) id: string,
   ) {
     const filterQuery = { _id: id };
-
     return await this.supplierLocationService.getDetail(filterQuery);
   }
 
@@ -37,7 +38,8 @@ export class SupplierLocationController {
   async create(
     @Body() supplierLocationDto: SupplierLocationDto
   ) {
-    return await this.supplierLocationService.create(supplierLocationDto);
+    const supplier: Supplier_Location = new Supplier_Location(supplierLocationDto);
+    return await this.supplierLocationService.create(supplier);
   }
 
   @Put(':id')
@@ -46,8 +48,8 @@ export class SupplierLocationController {
     @Body() supplierLocationDto: SupplierLocationDto
   ) {
     const filterQuery = { _id: id };
-
-    return await this.supplierLocationService.replace(filterQuery, supplierLocationDto);
+    const supplier: Supplier_Location = new Supplier_Location(supplierLocationDto);
+    return await this.supplierLocationService.replace(filterQuery, supplier);
   }
 
   @Patch(':id')
@@ -56,7 +58,6 @@ export class SupplierLocationController {
     @Body() supplierLocationDto: UpdateSupplierLocationDto
   ) {
     const filterQuery = { _id: id };
-    
     return await this.supplierLocationService.modify(filterQuery, supplierLocationDto);
   }
 
