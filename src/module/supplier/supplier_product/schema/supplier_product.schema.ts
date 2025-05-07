@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from 'uuid';
 import { SupplierProductUnit } from "src/constant/product.constant";
 import { SupplierProductDto } from "../dto/supplier_product.dto";
 import { Supplier_Location } from "../../supplier_location/schema/supplier_location.schema";
-import { TextUtil } from "src/shared/util/text.util";
 
 export type SupplierProductDocument = HydratedDocument<Supplier_Product>;
 

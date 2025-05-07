@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { IBasicService } from 'src/shared/interface/basic_service.interface';
 import { Supplier_Product, SupplierProductDocument } from './schema/supplier_product.schema';
-import { Document, Types, FilterQuery, FlattenMaps, Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { CustomConflictException } from 'src/shared/exception/custom-exception';
+import { Supplier_Location } from '../supplier_location/schema/supplier_location.schema';
 
 @Injectable()
 export class SupplierProductService implements IBasicService<Supplier_Product> {
@@ -33,6 +34,21 @@ export class SupplierProductService implements IBasicService<Supplier_Product> {
         { $match: filterQuery },
         { $skip: size * (page - 1) },
         { $limit: size },
+        {
+          $lookup: {
+            from: Supplier_Location.name.toLocaleLowerCase(), // Tên collection của Supplier_Location
+            localField: 'supplierLocationId', // Trường trong Supplier_Product
+            foreignField: '_id', // Trường trong Supplier_Location
+            as: 'supplierLocation', // Tên trường sau khi populate
+          },
+        },
+        { $unwind: { path: '$supplierLocation', preserveNullAndEmptyArrays: true } }, // Giải nén mảng (nếu cần)
+        {
+          $addFields: {
+            supplierLocationDebt: '$supplierLocation.debt', // Lấy trường debt từ supplierLocation
+          },
+        },
+        { $project: { supplierLocation: 0 } }, // Loại bỏ trường supplierLocation
       ]
     );
 

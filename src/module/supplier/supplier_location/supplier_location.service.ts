@@ -6,6 +6,7 @@ import { IPaging } from 'src/shared/interface/paging.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CustomConflictException } from 'src/shared/exception/custom-exception';
+import { ISupplierDebt } from 'src/shared/interface/supplier_location.interface';
 
 @Injectable()
 export class SupplierLocationService implements IBasicService<Supplier_Location> {
@@ -59,6 +60,12 @@ export class SupplierLocationService implements IBasicService<Supplier_Location>
 
   async modify(filterQuery: FilterQuery<Supplier_Location>, data: Partial<Supplier_Location>): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOneAndUpdate(filterQuery, data, { new: true });
+  }
+
+  async updateDebt(filterQuery: FilterQuery<Supplier_Location>, debt: ISupplierDebt): Promise<SupplierLocationDocument> {
+    return await this.supplierModel.findOneAndUpdate(filterQuery, {
+      $set: { debt }
+    }, { new: true });
   }
 
   async remove(filterQuery: FilterQuery<Supplier_Location>): Promise<SupplierLocationDocument> {

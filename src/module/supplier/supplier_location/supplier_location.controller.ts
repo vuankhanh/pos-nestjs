@@ -5,6 +5,8 @@ import { FormatResponseInterceptor } from 'src/shared/interceptors/format_respon
 import { ParseObjectIdPipe } from 'src/shared/pipes/parse_objectId_array.pipe';
 import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { Supplier_Location } from './schema/supplier_location.schema';
+import { SupplierDebtDto } from './dto/supplier_debt.dto';
+import { ISupplierDebt } from 'src/shared/interface/supplier_location.interface';
 
 @Controller('supplier')
 @UseGuards(AuthGuard)
@@ -59,6 +61,29 @@ export class SupplierLocationController {
   ) {
     const filterQuery = { _id: id };
     return await this.supplierLocationService.modify(filterQuery, supplierLocationDto);
+  }
+
+  @Patch(':id/debt/update')
+  async updateDebt(
+    @Param('id', new ParseObjectIdPipe()) id: string,
+    @Body() supplierDebtDto: SupplierDebtDto
+  ) {
+    const filterQuery = { _id: id };
+    return await this.supplierLocationService.updateDebt(filterQuery, supplierDebtDto);
+  }
+
+  @Patch(':id/debt/clear')
+  async clearDebt(
+    @Param('id', new ParseObjectIdPipe()) id: string
+  ) {
+    const filterQuery = { _id: id };
+
+    const debt: ISupplierDebt = {
+      amount: 0,
+      note: ''
+    }
+    
+    return await this.supplierLocationService.updateDebt(filterQuery, debt);
   }
 
   @Delete(':id')
