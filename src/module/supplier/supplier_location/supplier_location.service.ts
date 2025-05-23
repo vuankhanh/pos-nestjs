@@ -54,6 +54,11 @@ export class SupplierLocationService implements IBasicService<Supplier_Location>
     return await this.supplierModel.findOne(filterQuery);
   }
 
+  async getDebt(filterQuery: FilterQuery<Supplier_Location>): Promise<ISupplierDebt> {
+    const supplierDebt: ISupplierDebt = await this.supplierModel.findOne(filterQuery, { debt: 1 });
+    return supplierDebt;
+  }
+
   async replace(filterQuery: FilterQuery<Supplier_Location>, data: Supplier_Location): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOneAndReplace(filterQuery, data);
   }

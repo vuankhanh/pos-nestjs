@@ -36,6 +36,14 @@ export class SupplierLocationController {
     return await this.supplierLocationService.getDetail(filterQuery);
   }
 
+  @Get(':id/debt')
+  async getDebt(
+    @Param('id', new ParseObjectIdPipe()) id: string,
+  ) {
+    const filterQuery = { _id: id };
+    return await this.supplierLocationService.getDebt(filterQuery);
+  }
+
   @Post()
   async create(
     @Body() supplierLocationDto: SupplierLocationDto

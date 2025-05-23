@@ -23,6 +23,7 @@ export class PurchaseOrderService implements IBasicService<Purchase_Order> {
     const supplierProductAggregate = await this.purchaseOrderModel.aggregate(
       [
         { $match: filterQuery },
+        { $sort: { createdAt: -1 } },
         { $skip: size * (page - 1) },
         { $limit: size },
       ]
