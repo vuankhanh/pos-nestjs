@@ -18,6 +18,7 @@ import { HttpExceptionFilter } from './shared/exception/http_exception.filter';
 import { SupplierProductModule } from './module/supplier/supplier_product/supplier_product.module';
 import { VnPublicApisModule } from './module/vn-public-apis/vn-public-apis.module';
 import { PurchaseOrderModule } from './module/purchase_order/purchase_order.module';
+import { VietQrApiModule } from './module/viet-qr-api/viet-qr-api.module';
 
 @Module({
   imports: [
@@ -38,13 +39,14 @@ import { PurchaseOrderModule } from './module/purchase_order/purchase_order.modu
     CustomLoggerModule,
     SupplierProductModule,
     VnPublicApisModule,
-    PurchaseOrderModule
+    PurchaseOrderModule,
+    VietQrApiModule
   ],
   providers: [
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,
-    },
+    }
   ],
 })
 export class AppModule {

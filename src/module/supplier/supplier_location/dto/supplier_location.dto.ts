@@ -5,8 +5,14 @@ import { AddressDto } from "src/shared/dto/address.dto";
 import { CoordinatesDto } from "src/shared/dto/coordinates.dto";
 import { ISupplierLocation } from "src/shared/interface/supplier_location.interface";
 import { SupplierDebtDto } from "./supplier_debt.dto";
+import { BankTransferDto } from "./bank-transfer.dto";
 
 export class SupplierLocationDto implements ISupplierLocation {
+  @IsOptional()
+  @ValidateNested() // Validate các thuộc tính bên trong address
+  @Type(() => BankTransferDto) // Chị định class để validate
+  bankTransfer?: BankTransferDto;
+
   @IsNotEmpty({ message: 'The supplier name is required' })
   @IsString({ message: 'The supplier name must be a string' })
   name: string;

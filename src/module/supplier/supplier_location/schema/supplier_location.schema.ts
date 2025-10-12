@@ -4,11 +4,16 @@ import { IAddress } from "src/shared/interface/address.interface";
 import { ICoordinates } from "src/shared/interface/coordinates.interface";
 import { ISupplierDebt, ISupplierLocation } from "src/shared/interface/supplier_location.interface";
 import { SupplierLocationDto } from "../dto/supplier_location.dto";
+import { IBank } from "src/shared/interface/vietqr.interface";
+import { IBankPayment } from "src/shared/interface/bank-payment.interface";
 
 export type SupplierLocationDocument = HydratedDocument<Supplier_Location>;
 
 @Schema({ timestamps: true })
 export class Supplier_Location implements ISupplierLocation {
+  @Prop({ type: Object })
+  bankTransfer?: IBankPayment;
+
   @Prop({ type: String, required: true, unique: true })
   name: string;
 
@@ -32,6 +37,7 @@ export class Supplier_Location implements ISupplierLocation {
   position?: ICoordinates;
 
   constructor(supplierLocationDto: SupplierLocationDto){
+    this.bankTransfer = supplierLocationDto.bankTransfer;
     this.name = supplierLocationDto.name;
     this.address = supplierLocationDto.address;
     this.telephone = supplierLocationDto.telephone;

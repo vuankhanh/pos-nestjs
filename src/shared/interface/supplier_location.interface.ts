@@ -1,13 +1,10 @@
-import { IDistrict, IProvince, IWard } from "./vn-public-apis.interface";
+import { IAddress } from "./address.interface";
+import { IBankPayment } from "./bank-payment.interface";
 
 export interface ISupplierLocation {
+  bankTransfer?: IBankPayment;
   name: string; // Name of the supplier
-  address: {
-    province: IProvince;
-    district: IDistrict;
-    ward: IWard;
-    street: string;
-  };
+  address: IAddress;
   telephone: string; // Contact phone number
   debt?: ISupplierDebt; // Optional field for supplier debt
   email?: string; // Contact email

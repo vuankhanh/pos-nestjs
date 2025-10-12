@@ -45,10 +45,15 @@ export class SupplierProductService implements IBasicService<Supplier_Product> {
         { $unwind: { path: '$supplierLocation', preserveNullAndEmptyArrays: true } }, // Giải nén mảng (nếu cần)
         {
           $addFields: {
+            supplierLocationBankTransfer: '$supplierLocation.bankTransfer', // Lấy trường bankTransfer từ supplierLocation
             supplierLocationDebt: '$supplierLocation.debt', // Lấy trường debt từ supplierLocation
           },
         },
-        { $project: { supplierLocation: 0 } }, // Loại bỏ trường supplierLocation
+        {
+          $project: {
+            supplierLocation: 0
+          }
+        }, // Loại bỏ trường supplierLocation
       ]
     );
 

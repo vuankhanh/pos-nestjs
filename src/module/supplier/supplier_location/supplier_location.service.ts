@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { IBasicService } from 'src/shared/interface/basic_service.interface';
 import { Supplier_Location, SupplierLocationDocument } from './schema/supplier_location.schema';
-import { Document, Types, FilterQuery, FlattenMaps } from 'mongoose';
+import { FilterQuery } from 'mongoose';
 import { IPaging } from 'src/shared/interface/paging.interface';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -76,5 +76,4 @@ export class SupplierLocationService implements IBasicService<Supplier_Location>
   async remove(filterQuery: FilterQuery<Supplier_Location>): Promise<SupplierLocationDocument> {
     return await this.supplierModel.findOneAndDelete(filterQuery);
   }
-
 }

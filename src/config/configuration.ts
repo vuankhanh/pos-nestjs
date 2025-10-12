@@ -43,7 +43,13 @@ export default () => {
     port: Number(process.env.VN_PUBLIC_API_PORT) || 443,
   }
 
+  const vietQrApi = {
+    protocol: process.env.VIETQR_API_PROTOCOL || 'https',
+    host: process.env.VIETQR_API_HOST || 'api.vietqr.io',
+    port: Number(process.env.VIETQR_API_PORT) || 443,
+  }
+
   const config = process.env.NODE_ENV?.trim() === 'pro' ? pro : dev;
 
-  return { ...config, folder, vnPublicApi };
+  return { ...config, folder, vnPublicApi, vietQrApi };
 }

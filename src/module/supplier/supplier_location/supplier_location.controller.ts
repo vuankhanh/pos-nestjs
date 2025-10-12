@@ -7,6 +7,8 @@ import { AuthGuard } from 'src/shared/guards/auth.guard';
 import { Supplier_Location } from './schema/supplier_location.schema';
 import { SupplierDebtDto } from './dto/supplier_debt.dto';
 import { ISupplierDebt } from 'src/shared/interface/supplier_location.interface';
+import * as lodash from 'lodash';
+import { CustomBadRequestException } from 'src/shared/exception/custom-exception';
 
 @Controller('supplier')
 @UseGuards(AuthGuard)
@@ -67,6 +69,7 @@ export class SupplierLocationController {
     @Param('id', new ParseObjectIdPipe()) id: string,
     @Body() supplierLocationDto: UpdateSupplierLocationDto
   ) {
+    if (lodash.isEmpty(supplierLocationDto)) throw new CustomBadRequestException('Vui lòng nhập thêm thống tin');
     const filterQuery = { _id: id };
     return await this.supplierLocationService.modify(filterQuery, supplierLocationDto);
   }

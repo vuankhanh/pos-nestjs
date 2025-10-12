@@ -7,7 +7,6 @@ import { FormatResponseInterceptor } from 'src/shared/interceptors/format_respon
 import { SupplierLocationService } from '../supplier_location/supplier_location.service';
 import { CustomBadRequestException } from 'src/shared/exception/custom-exception';
 import { ObjectId } from 'mongodb';
-import { AuthGuard } from 'src/shared/guards/auth.guard';
 
 @Controller('supplier_product')
 // @UseGuards(AuthGuard)
@@ -93,7 +92,6 @@ export class SupplierProductController {
     const data: Partial<Supplier_Product> = { ...supplierProductDto };
 
     const supplierLocationId = supplierProductDto.supplierLocationId;
-    console.log(`supplierLocationId: `, supplierLocationId);
 
     if (supplierLocationId) {
       data.supplierLocationId = ObjectId.createFromHexString(supplierLocationId);
