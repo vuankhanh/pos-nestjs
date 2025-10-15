@@ -47,6 +47,8 @@ export default () => {
     protocol: process.env.VIETQR_API_PROTOCOL || 'https',
     host: process.env.VIETQR_API_HOST || 'api.vietqr.io',
     port: Number(process.env.VIETQR_API_PORT) || 443,
+    clientId: process.env.VIETQR_CLIENT_ID,
+    apiKey: process.env.VIETQR_API_KEY
   }
 
   const config = process.env.NODE_ENV?.trim() === 'pro' ? pro : dev;
